@@ -1,0 +1,267 @@
+@import "tailwindcss";
+
+@theme {
+  /* Color palette — XuanNha.Dev design system */
+  --color-primary: #111827;
+  --color-secondary: #1f2937;
+  --color-accent: #3b82f6;
+  --color-accent-hover: #2563eb;
+  --color-background: #f8fafc;
+  --color-surface: #ffffff;
+  --color-border: #e5e7eb;
+  --color-muted: #6b7280;
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-danger: #ef4444;
+
+  /* Typography */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-space-grotesk), var(--font-inter), ui-sans-serif, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
+
+  --shadow-card: 0 1px 3px 0 rgb(17 24 39 / 0.06), 0 1px 2px -1px rgb(17 24 39 / 0.06);
+  --shadow-card-hover:
+    0 12px 32px -8px rgb(17 24 39 / 0.14), 0 4px 12px -4px rgb(17 24 39 / 0.08);
+
+  --animate-shimmer: shimmer 1.8s infinite;
+  --animate-fade-in: fade-in 0.5s ease-out both;
+
+  @keyframes shimmer {
+    100% {
+      transform: translateX(100%);
+    }
+  }
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+body {
+  background: var(--color-background);
+  color: var(--color-primary);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+html[data-site-theme="dark"] {
+  --color-primary: #f8fafc;
+  --color-secondary: #cbd5e1;
+  --color-background: #0b1120;
+  --color-surface: #111827;
+  --color-border: #273449;
+  --color-muted: #94a3b8;
+  --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.28), 0 1px 2px -1px rgb(0 0 0 / 0.2);
+  --shadow-card-hover:
+    0 16px 36px -12px rgb(0 0 0 / 0.42), 0 6px 16px -8px rgb(0 0 0 / 0.32);
+  color-scheme: dark;
+}
+
+html[data-site-theme="dark"] .bg-primary {
+  background-color: #2563eb;
+}
+
+html[data-site-theme="dark"] .hover\:bg-secondary:hover {
+  background-color: #1d4ed8;
+}
+
+html[data-site-theme="dark"] .text-white {
+  color: #ffffff;
+}
+
+html[data-site-theme="dark"] .shadow-sm,
+html[data-site-theme="dark"] .shadow-md,
+html[data-site-theme="dark"] .shadow-lg {
+  box-shadow: var(--shadow-card);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading);
+  letter-spacing: -0.02em;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--color-accent) 20%, transparent);
+}
+
+/* Thin, subtle scrollbars */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
+}
+
+@utility container-page {
+  margin-inline: auto;
+  width: 100%;
+  max-width: 76rem;
+  padding-inline: 1.25rem;
+
+  @media (width >= 768px) {
+    padding-inline: 2rem;
+  }
+}
+
+@utility skeleton {
+  position: relative;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--color-border) 60%, transparent);
+  border-radius: 0.5rem;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.6), transparent);
+    animation: shimmer 1.8s infinite;
+  }
+}
+
+/* Rendered markdown content */
+.prose-custom {
+  line-height: 1.8;
+  color: var(--color-secondary);
+  font-size: 1.0625rem;
+}
+
+.prose-custom h1,
+.prose-custom h2,
+.prose-custom h3,
+.prose-custom h4 {
+  color: var(--color-primary);
+  font-weight: 700;
+  margin-top: 2em;
+  margin-bottom: 0.75em;
+  scroll-margin-top: 6rem;
+}
+
+.prose-custom h1 {
+  font-size: 1.875rem;
+}
+.prose-custom h2 {
+  font-size: 1.5rem;
+}
+.prose-custom h3 {
+  font-size: 1.25rem;
+}
+
+.prose-custom p {
+  margin-block: 1.1em;
+}
+
+.prose-custom a {
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.prose-custom ul,
+.prose-custom ol {
+  padding-left: 1.5rem;
+  margin-block: 1.1em;
+}
+
+.prose-custom ul {
+  list-style: disc;
+}
+.prose-custom ol {
+  list-style: decimal;
+}
+
+.prose-custom li {
+  margin-block: 0.35em;
+}
+
+.prose-custom blockquote {
+  border-left: 3px solid var(--color-accent);
+  padding-left: 1rem;
+  font-style: italic;
+  color: var(--color-muted);
+  margin-block: 1.5em;
+}
+
+.prose-custom code {
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+  background: color-mix(in srgb, var(--color-border) 45%, transparent);
+  padding: 0.15em 0.4em;
+  border-radius: 0.3em;
+}
+
+.prose-custom pre {
+  background: var(--color-primary);
+  color: #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  overflow-x: auto;
+  margin-block: 1.5em;
+  font-size: 0.875rem;
+}
+
+.prose-custom pre code {
+  background: transparent;
+  padding: 0;
+  color: inherit;
+}
+
+.prose-custom img {
+  border-radius: 0.75rem;
+  margin-block: 1.5em;
+  max-width: 100%;
+}
+
+.prose-custom hr {
+  border-color: var(--color-border);
+  margin-block: 2.5em;
+}
+
+.prose-custom table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-block: 1.5em;
+  font-size: 0.9375rem;
+}
+
+.prose-custom th,
+.prose-custom td {
+  border: 1px solid var(--color-border);
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+}
+
+.prose-custom th {
+  background: color-mix(in srgb, var(--color-border) 30%, transparent);
+  font-weight: 600;
+}
