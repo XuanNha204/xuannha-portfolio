@@ -77,7 +77,6 @@ export const tagSchema = z.object({
 export const skillSchema = z.object({
   name: z.string().min(1).max(100),
   category: z.enum(["frontend", "backend", "database", "devops", "tools", "other"]),
-  level: z.number().min(1).max(100),
   icon: z.string().optional().or(z.literal("")),
   order: z.number().optional(),
   visible: z.boolean().optional(),

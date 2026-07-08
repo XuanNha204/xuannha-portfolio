@@ -82,15 +82,15 @@ async function main() {
   if (process.argv.includes("--demo")) {
     if ((await Skill.countDocuments()) === 0) {
       await Skill.insertMany([
-        { name: "React / Next.js", category: "frontend", level: 90, order: 1 },
-        { name: "TypeScript", category: "frontend", level: 85, order: 2 },
-        { name: "Tailwind CSS", category: "frontend", level: 90, order: 3 },
-        { name: "Node.js", category: "backend", level: 80, order: 1 },
-        { name: "REST API", category: "backend", level: 85, order: 2 },
-        { name: "MongoDB", category: "database", level: 80, order: 1 },
-        { name: "Docker", category: "devops", level: 65, order: 1 },
-        { name: "Git / Github", category: "tools", level: 85, order: 1 },
-        { name: "AI-Assisted Development", category: "tools", level: 90, order: 2 },
+        { name: "React / Next.js", category: "frontend", order: 1 },
+        { name: "TypeScript", category: "frontend", order: 2 },
+        { name: "Tailwind CSS", category: "frontend", order: 3 },
+        { name: "Node.js", category: "backend", order: 1 },
+        { name: "REST API", category: "backend", order: 2 },
+        { name: "MongoDB", category: "database", order: 1 },
+        { name: "Docker", category: "devops", order: 1 },
+        { name: "Git / Github", category: "tools", order: 1 },
+        { name: "AI-Assisted Development", category: "tools", order: 2 },
       ]);
       console.log("✓ Đã tạo demo skills");
     }

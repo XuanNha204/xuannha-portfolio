@@ -62,18 +62,24 @@ export function ProjectSlider({ projects }: { projects: ProjectDTO[] }) {
   };
 
   const onPointerDown = (e: React.PointerEvent) => {
+    if (e.pointerType === "mouse" && e.button !== 0) return;
     const el = trackRef.current;
     if (!el) return;
     drag.current = { active: true, startX: e.clientX, startScroll: el.scrollLeft, moved: false };
-    el.setPointerCapture(e.pointerId);
   };
 
   const onPointerMove = (e: React.PointerEvent) => {
     const el = trackRef.current;
     if (!el || !drag.current.active) return;
     const delta = e.clientX - drag.current.startX;
-    if (Math.abs(delta) > 6) drag.current.moved = true;
-    el.scrollLeft = drag.current.startScroll - delta;
+    // Capture the pointer only once the gesture becomes a real drag —
+    // capturing on pointerdown would retarget the click to the track
+    // and swallow navigation on plain clicks.
+    if (!drag.current.moved && Math.abs(delta) > 6) {
+      drag.current.moved = true;
+      el.setPointerCapture(e.pointerId);
+    }
+    if (drag.current.moved) el.scrollLeft = drag.current.startScroll - delta;
   };
 
   const endDrag = (e: React.PointerEvent) => {

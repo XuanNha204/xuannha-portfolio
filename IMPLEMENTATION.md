@@ -484,3 +484,61 @@ Ngày 07/07/2026, tài liệu + hướng dẫn chuẩn bị deploy.
 - Cold start 5-10 phút: bình thường (npm install + build)
 
 **Kiểm thử trước production**: `npm start` local → truy cập trang chủ/admin/blog → kiểm tra DB kết nối ✅
+
+---
+
+## 13. Tối ưu UI mobile, fix bug slider dự án, bỏ thanh tiến trình kỹ năng, nâng cấp Chat Widget
+
+Ngày 08/07/2026, gồm 4 nhóm thay đổi.
+
+### 13.1. Fix menu chọn ngôn ngữ trong mobile menu
+
+- **Lỗi**: dropdown ngôn ngữ dùng `position: absolute` nằm trong panel mobile menu có `overflow-hidden` (cần cho animation đóng/mở height) → khi xổ xuống, danh sách ngôn ngữ bị cắt mất; dropdown còn căn `right-0` theo nút sát mép trái nên tràn ra ngoài màn hình.
+- **Sửa** (`src/components/layout/header.tsx`): trên mobile bỏ dropdown, thay bằng **grid 3 nút chọn ngôn ngữ trực tiếp** (🇻🇳 VI / 🇺🇸 EN / 🇨🇳 中文), ngôn ngữ đang chọn viền accent; nút sáng/tối thành hàng riêng full-width. Desktop giữ nguyên dropdown.
+
+### 13.2. Fix click vào Project Card không điều hướng (trang /projects)
+
+- **Triệu chứng**: click card dự án → URL không đổi, không request, không lỗi console.
+- **Nguyên nhân** (`src/features/projects/project-slider.tsx` — slider tự viết bằng Pointer Events, không phải Embla): `onPointerDown` gọi `setPointerCapture()` ngay khi nhấn chuột. Theo spec Pointer Events, khi track đang giữ capture thì sự kiện `click` bị **retarget về track div** thay vì thẻ `<a>` bên trong → click không bao giờ tới Link.
+- **Sửa**: chỉ `setPointerCapture` trong `onPointerMove` khi cử chỉ vượt ngưỡng 6px (đã thực sự là drag); click thường đi thẳng tới Link. Drag vẫn mượt, click-sau-drag vẫn bị chặn đúng. Thêm chặn chuột phải/giữa (`e.button !== 0`).
+
+### 13.3. Bỏ hoàn toàn thanh tiến trình (level %) của kỹ năng
+
+Chỉ hiển thị tên kỹ năng dạng **chip/tag** bo tròn; xóa hẳn field `level` khỏi toàn hệ thống:
+
+| File | Thay đổi |
+|---|---|
+| `src/features/home/skills-section.tsx` | Bỏ thanh progress + số %, render tên skill thành chip `flex flex-wrap` (dùng chung cho Home + About) |
+| `src/features/admin/skills/skill-manager.tsx` | Xóa slider "Mức độ thành thạo" trong form, xóa badge % trong danh sách, bỏ `level` khỏi form state/payload |
+| `src/schemas/index.ts` | Xóa `level` khỏi `skillSchema` |
+| `src/models/Skill.ts` | Xóa `level` khỏi interface + schema |
+| `src/types/index.ts` | Xóa `level` khỏi `SkillDTO` |
+| `src/services/profile.service.ts` + `src/app/api/skills/route.ts` | Sort đổi `{ order: 1, level: -1 }` → `{ order: 1, name: 1 }` |
+| `scripts/seed.ts` | Bỏ `level` khỏi 9 skill demo |
+
+- Document skill cũ trong MongoDB vẫn còn field `level` — vô hại, không cần migration.
+
+### 13.4. Tối ưu Chat Widget (Trợ lý AI) — mobile UX + accessibility
+
+Toàn bộ trong `src/features/chat/chat-widget.tsx` + i18n mới trong `src/components/site/site-preferences.tsx`. 9 hạng mục:
+
+1. **Full-screen trên mobile** (<640px): khung chat chiếm `h-dvh` × full width (dùng `dvh` né thanh địa chỉ động), trượt lên từ cạnh dưới, khóa cuộn `body` khi mở → không còn thấy/chạm được nội dung trang phía sau (hết cảnh 2 nút "Gửi" cạnh nhau ở /contact). Desktop giữ dạng thẻ nổi.
+2. **Typing indicator + timeout**: bubble ba chấm nhấp nháy + chữ "Trợ lý đang trả lời..." hiện liên tục khi chờ (streaming SSE đã có sẵn). Timeout 60s nếu chưa nhận byte nào → hủy request + thông báo `chat.timeout` thân thiện. Lỗi giữa chừng thay vào bubble rỗng thay vì để tin nhắn trống.
+3. **Chống auto-zoom iOS**: ô nhập `text-base` (16px) trên mobile, `sm:text-sm` desktop.
+4. **Textarea auto-resize**: thay input 1 dòng bằng textarea tự giãn tối đa ~5 dòng (120px) rồi cuộn trong; Enter gửi, Shift+Enter xuống dòng, xử lý IME (`isComposing`) cho bộ gõ tiếng Việt/Trung.
+5. **Vùng chạm chuẩn**: các nút ảnh/mic/gửi/đóng tăng lên 44×44px (`h-11 w-11`), khoảng cách `gap-2` (8px), form `items-end`.
+6. **Phản hồi nút mic**: đang nghe → nền đỏ đặc + ring + icon pulse + phụ đề "Đang nghe..."; bị từ chối quyền → banner đỏ `chat.micDenied` tự ẩn sau 5s; `rec.start()` bọc try/catch; nút vẫn tự ẩn nếu trình duyệt không hỗ trợ.
+7. **Nút đọc to rõ ràng**: thêm nhãn chữ "Đọc to"/"Dừng đọc", khi phát có nền accent + sóng âm 3 vạch động. Fix bug: `onend` của utterance bị cancel có thể xóa nhầm trạng thái tin mới → chỉ clear khi index còn khớp (đảm bảo 1 tin/lúc).
+8. **Header khung chat**: cao tối thiểu 56px (`min-h-14`), nút đóng X ngay trong header, đệm `safe-area-inset-top` khi full-screen.
+9. **Safe area**: nút nổi + khung chat desktop + form nhập mobile đều cộng `env(safe-area-inset-bottom)` để không bị thanh gesture iPhone che.
+
+**i18n mới** (vi/en/zh): `chat.thinking`, `chat.timeout`, `chat.micDenied`.
+
+### Kiểm tra
+
+```bash
+npm.cmd run lint    # ✅ pass
+npm.cmd run build   # ✅ pass — 40 routes
+```
+
+Nghiệm thu thủ công đề xuất: mở chat ở 360×640 / 390×844 / 414×896 (phải phủ kín màn hình), gõ câu hỏi dài 150-200 ký tự (textarea giãn dòng), test iOS Safari (không auto-zoom), click card dự án ở `/projects` (điều hướng bình thường, kéo ngang vẫn hoạt động).

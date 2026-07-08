@@ -52,23 +52,14 @@ export function SkillsSection({ skills }: { skills: SkillDTO[] }) {
                 <h3 className="mb-5 font-mono text-sm font-semibold uppercase tracking-wider text-accent">
                   {CATEGORY_LABELS[category]}
                 </h3>
-                <div className="space-y-4">
+                <div className="flex flex-wrap gap-2">
                   {grouped[category].map((skill) => (
-                    <div key={skill._id}>
-                      <div className="mb-1.5 flex items-center justify-between text-sm">
-                        <span className="font-medium text-primary">{skill.name}</span>
-                        <span className="font-mono text-xs text-muted">{skill.level}%</span>
-                      </div>
-                      <div className="h-1.5 overflow-hidden rounded-full bg-border/60">
-                        <motion.div
-                          className="h-full rounded-full bg-accent"
-                          initial={{ width: 0 }}
-                          whileInView={{ width: `${skill.level}%` }}
-                          viewport={{ once: true }}
-                          transition={{ duration: 1, ease: "easeOut", delay: 0.2 }}
-                        />
-                      </div>
-                    </div>
+                    <span
+                      key={skill._id}
+                      className="rounded-full border border-border bg-background px-3 py-1 text-sm font-medium text-primary"
+                    >
+                      {skill.name}
+                    </span>
                   ))}
                 </div>
               </motion.div>

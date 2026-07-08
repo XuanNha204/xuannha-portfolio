@@ -27,7 +27,6 @@ const CATEGORIES = [
 const EMPTY_FORM = {
   name: "",
   category: "frontend" as SkillDTO["category"],
-  level: 70,
   order: 0,
   visible: true,
 };
@@ -49,7 +48,6 @@ export function SkillManager() {
     setForm({
       name: skill.name,
       category: skill.category,
-      level: skill.level,
       order: skill.order,
       visible: skill.visible,
     });
@@ -58,7 +56,7 @@ export function SkillManager() {
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    const payload = { ...form, level: Number(form.level), order: Number(form.order) };
+    const payload = { ...form, order: Number(form.order) };
     const onSuccess = () => setOpen(false);
     if (editing) {
       update.mutate({ id: editing._id, data: payload }, { onSuccess });
@@ -106,7 +104,6 @@ export function SkillManager() {
                   >
                     <div className="flex items-center gap-3">
                       <span className="text-sm font-medium text-primary">{skill.name}</span>
-                      <Badge variant="accent">{skill.level}%</Badge>
                       {!skill.visible && <Badge>Ẩn</Badge>}
                     </div>
                     <div className="flex gap-1">
@@ -179,18 +176,6 @@ export function SkillManager() {
                 onChange={(e) => setForm({ ...form, order: Number(e.target.value) })}
               />
             </div>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="skill-level">Mức độ thành thạo: {form.level}%</Label>
-            <input
-              id="skill-level"
-              type="range"
-              min={1}
-              max={100}
-              value={form.level}
-              onChange={(e) => setForm({ ...form, level: Number(e.target.value) })}
-              className="w-full accent-[var(--color-accent)]"
-            />
           </div>
           <div className="flex items-center justify-between">
             <Label>Hiển thị công khai</Label>

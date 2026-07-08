@@ -30,7 +30,7 @@ interface SpeechRecognitionLike {
   continuous: boolean;
   onresult: (e: { results: ArrayLike<SpeechResult> }) => void;
   onend: () => void;
-  onerror: () => void;
+  onerror: (e: { error?: string }) => void;
   start: () => void;
   stop: () => void;
 }
@@ -96,11 +96,14 @@ export function ChatWidget() {
   const [listening, setListening] = useState(false);
   const [speakingIdx, setSpeakingIdx] = useState<number | null>(null);
   const [voiceSupported, setVoiceSupported] = useState(false);
+  const [notice, setNotice] = useState<string | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
 
   const scrollRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
+  const noticeTimer = useRef<number | null>(null);
 
   const speechLang = language === "zh" ? "zh-CN" : language === "en" ? "en-US" : "vi-VN";
 
@@ -113,8 +116,35 @@ export function ChatWidget() {
   }, [messages, loading]);
 
   useEffect(() => {
-    if (open) inputRef.current?.focus();
-  }, [open]);
+    const mq = window.matchMedia("(max-width: 639px)");
+    const update = () => setIsMobile(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
+
+  // Mobile: chat full-screen nên khóa cuộn trang phía sau khi đang mở.
+  useEffect(() => {
+    if (!open || !isMobile) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [open, isMobile]);
+
+  useEffect(() => {
+    // Không auto-focus trên mobile để bàn phím không bật lên ngay khi mở chat.
+    if (open && !isMobile) inputRef.current?.focus();
+  }, [open, isMobile]);
+
+  // Textarea tự giãn theo nội dung, tối đa ~5 dòng (120px) rồi cuộn dọc bên trong.
+  useEffect(() => {
+    const el = inputRef.current;
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = `${Math.min(el.scrollHeight, 120)}px`;
+  }, [input, open]);
 
   // Dừng nghe/đọc khi đóng khung chat.
   useEffect(() => {
@@ -125,6 +155,12 @@ export function ChatWidget() {
       setSpeakingIdx(null);
     }
   }, [open]);
+
+  function showNotice(message: string) {
+    setNotice(message);
+    if (noticeTimer.current) window.clearTimeout(noticeTimer.current);
+    noticeTimer.current = window.setTimeout(() => setNotice(null), 5000);
+  }
 
   function toggleVoice() {
     const SR = getSpeechRecognition();
@@ -144,10 +180,22 @@ export function ChatWidget() {
       setInput(text);
     };
     rec.onend = () => setListening(false);
-    rec.onerror = () => setListening(false);
+    rec.onerror = (e) => {
+      setListening(false);
+      if (e?.error === "not-allowed" || e?.error === "service-not-allowed") {
+        showNotice(t("chat.micDenied"));
+      } else if (e?.error && e.error !== "aborted" && e.error !== "no-speech") {
+        showNotice(t("chat.error"));
+      }
+    };
     recognitionRef.current = rec;
     setListening(true);
-    rec.start();
+    try {
+      rec.start();
+    } catch {
+      setListening(false);
+      showNotice(t("chat.micDenied"));
+    }
   }
 
   function speak(idx: number, text: string) {
@@ -159,7 +207,11 @@ export function ChatWidget() {
     }
     const utter = new SpeechSynthesisUtterance(plainText(text));
     utter.lang = speechLang;
-    utter.onend = () => setSpeakingIdx(null);
+    // cancel() ở trên khiến onend của tin đang đọc trước đó vẫn bắn —
+    // chỉ clear khi index còn là tin hiện tại để không xóa nhầm trạng thái mới.
+    const clear = () => setSpeakingIdx((prev) => (prev === idx ? null : prev));
+    utter.onend = clear;
+    utter.onerror = clear;
     setSpeakingIdx(idx);
     window.speechSynthesis.speak(utter);
   }
@@ -205,11 +257,19 @@ export function ChatWidget() {
       };
     });
 
+    // Timeout 60s: chỉ hủy nếu chưa nhận được byte nào (stream đã chạy thì để chạy tiếp).
+    const controller = new AbortController();
+    let gotFirstChunk = false;
+    const timeoutTimer = window.setTimeout(() => {
+      if (!gotFirstChunk) controller.abort();
+    }, 60_000);
+
     try {
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ messages: apiMessages }),
+        signal: controller.signal,
       });
       if (!res.ok || !res.body) throw new Error("chat_failed");
 
@@ -221,6 +281,7 @@ export function ChatWidget() {
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
+        gotFirstChunk = true;
         acc += decoder.decode(value, { stream: true });
         setMessages((prev) => {
           const next = [...prev];
@@ -235,14 +296,42 @@ export function ChatWidget() {
           return next;
         });
       }
-    } catch {
-      setMessages((prev) => [...prev, { role: "assistant", content: t("chat.error") }]);
+    } catch (err) {
+      const timedOut = err instanceof Error && err.name === "AbortError";
+      const errorText = timedOut ? t("chat.timeout") : t("chat.error");
+      setMessages((prev) => {
+        const next = [...prev];
+        const last = next[next.length - 1];
+        if (last?.role === "assistant" && !last.content) {
+          next[next.length - 1] = { role: "assistant", content: errorText };
+        } else {
+          next.push({ role: "assistant", content: errorText });
+        }
+        return next;
+      });
     } finally {
+      window.clearTimeout(timeoutTimer);
       setLoading(false);
     }
   }
 
   const suggestions = [t("chat.suggest1"), t("chat.suggest2"), t("chat.suggest3")];
+
+  // Chỉ báo "đang trả lời": ba chấm nhấp nháy + nhãn chữ, hiện liên tục trong lúc chờ.
+  const typingIndicator = (
+    <span className="flex items-center gap-2">
+      <span className="flex gap-1" aria-hidden>
+        {[0, 1, 2].map((d) => (
+          <span
+            key={d}
+            className="h-1.5 w-1.5 animate-bounce rounded-full bg-current"
+            style={{ animationDelay: `${d * 0.15}s` }}
+          />
+        ))}
+      </span>
+      <span className="text-xs">{t("chat.thinking")}</span>
+    </span>
+  );
 
   return (
     <>
@@ -254,7 +343,7 @@ export function ChatWidget() {
         initial={{ scale: 0, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ delay: 0.4, type: "spring", stiffness: 260, damping: 20 }}
-        className="fixed bottom-5 right-5 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-white shadow-lg transition-colors hover:bg-secondary"
+        className="fixed bottom-[calc(1.25rem+env(safe-area-inset-bottom))] right-5 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-white shadow-lg transition-colors hover:bg-secondary"
       >
         <AnimatePresence mode="wait" initial={false}>
           <motion.span
@@ -273,23 +362,31 @@ export function ChatWidget() {
       <AnimatePresence>
         {open && (
           <motion.div
-            initial={{ opacity: 0, y: 24, scale: 0.96 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 24, scale: 0.96 }}
-            transition={{ duration: 0.2, ease: [0.21, 0.47, 0.32, 0.98] }}
-            className="fixed bottom-24 right-5 z-50 flex h-[34rem] max-h-[calc(100vh-8rem)] w-[calc(100vw-2.5rem)] max-w-sm flex-col overflow-hidden rounded-2xl border border-border bg-surface shadow-2xl"
+            initial={isMobile ? { y: "100%" } : { opacity: 0, y: 24, scale: 0.96 }}
+            animate={isMobile ? { y: 0 } : { opacity: 1, y: 0, scale: 1 }}
+            exit={isMobile ? { y: "100%" } : { opacity: 0, y: 24, scale: 0.96 }}
+            transition={{ duration: 0.25, ease: [0.21, 0.47, 0.32, 0.98] }}
+            className="fixed left-0 top-0 z-50 flex h-dvh w-full flex-col overflow-hidden bg-surface sm:bottom-[calc(6rem+env(safe-area-inset-bottom))] sm:left-auto sm:right-5 sm:top-auto sm:h-[34rem] sm:max-h-[calc(100vh-8rem)] sm:w-[calc(100vw-2.5rem)] sm:max-w-sm sm:rounded-2xl sm:border sm:border-border sm:shadow-2xl"
           >
             {/* Header */}
-            <div className="flex items-center gap-3 border-b border-border bg-primary px-4 py-3 text-white">
-              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white/15">
+            <div className="flex min-h-14 items-center gap-3 border-b border-border bg-primary px-4 py-3 pt-[calc(0.75rem+env(safe-area-inset-top))] text-white sm:pt-3">
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/15">
                 <Bot className="h-5 w-5" />
               </span>
-              <div className="min-w-0">
+              <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-semibold">{t("chat.title")}</p>
                 <p className="truncate text-xs text-white/70">
                   {listening ? t("chat.listening") : t("chat.subtitle")}
                 </p>
               </div>
+              <button
+                type="button"
+                onClick={() => setOpen(false)}
+                aria-label={t("chat.close")}
+                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg text-white/80 transition-colors hover:bg-white/10 hover:text-white"
+              >
+                <X className="h-5 w-5" />
+              </button>
             </div>
 
             {/* Danh sách tin nhắn */}
@@ -402,7 +499,7 @@ export function ChatWidget() {
                           </ReactMarkdown>
                         </div>
                       ) : (
-                        loading && <Loader2 className="h-4 w-4 animate-spin" />
+                        loading && typingIndicator
                       )
                     ) : (
                       <span className="whitespace-pre-wrap">{msg.content}</span>
@@ -413,12 +510,32 @@ export function ChatWidget() {
                         type="button"
                         onClick={() => speak(i, msg.content)}
                         aria-label={speakingIdx === i ? t("chat.stopAudio") : t("chat.readAloud")}
-                        className="mt-1 inline-flex items-center gap-1 text-xs text-muted transition-colors hover:text-accent"
+                        className={cn(
+                          "mt-1.5 inline-flex items-center gap-1.5 rounded-full px-2 py-1 text-xs transition-colors",
+                          speakingIdx === i
+                            ? "bg-accent/15 text-accent"
+                            : "text-muted hover:text-accent"
+                        )}
                       >
                         {speakingIdx === i ? (
-                          <Square className="h-3 w-3" />
+                          <>
+                            <Square className="h-3 w-3" />
+                            <span className="flex items-end gap-0.5" aria-hidden>
+                              {[6, 9, 7].map((h, b) => (
+                                <span
+                                  key={b}
+                                  className="w-0.5 animate-pulse rounded-full bg-current"
+                                  style={{ height: `${h}px`, animationDelay: `${b * 0.15}s` }}
+                                />
+                              ))}
+                            </span>
+                            <span>{t("chat.stopAudio")}</span>
+                          </>
                         ) : (
-                          <Volume2 className="h-3 w-3" />
+                          <>
+                            <Volume2 className="h-3 w-3" />
+                            <span>{t("chat.readAloud")}</span>
+                          </>
                         )}
                       </button>
                     )}
@@ -432,7 +549,7 @@ export function ChatWidget() {
                     <Bot className="h-4 w-4" />
                   </span>
                   <div className="rounded-2xl rounded-tl-sm bg-border/40 px-3 py-2 text-sm text-muted">
-                    <Loader2 className="h-4 w-4 animate-spin" />
+                    {typingIndicator}
                   </div>
                 </div>
               )}
@@ -462,13 +579,20 @@ export function ChatWidget() {
               </div>
             )}
 
+            {/* Thông báo lỗi tạm thời (mic bị từ chối quyền...) */}
+            {notice && (
+              <div className="border-t border-border bg-danger/5 px-4 py-2 text-xs text-danger">
+                {notice}
+              </div>
+            )}
+
             {/* Ô nhập */}
             <form
               onSubmit={(e) => {
                 e.preventDefault();
                 sendMessage();
               }}
-              className="flex items-center gap-1.5 border-t border-border p-3"
+              className="flex items-end gap-2 border-t border-border p-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] sm:pb-3"
             >
               <input
                 ref={fileRef}
@@ -484,7 +608,7 @@ export function ChatWidget() {
                 type="button"
                 onClick={() => fileRef.current?.click()}
                 aria-label={t("chat.attach")}
-                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-muted transition-colors hover:text-accent"
+                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg text-muted transition-colors hover:text-accent"
               >
                 <ImagePlus className="h-5 w-5" />
               </button>
@@ -495,9 +619,9 @@ export function ChatWidget() {
                   onClick={toggleVoice}
                   aria-label={t("chat.mic")}
                   className={cn(
-                    "flex h-10 w-10 shrink-0 items-center justify-center rounded-lg transition-colors",
+                    "flex h-11 w-11 shrink-0 items-center justify-center rounded-lg transition-all",
                     listening
-                      ? "bg-danger/10 text-danger"
+                      ? "bg-danger text-white ring-4 ring-danger/25"
                       : "text-muted hover:text-accent"
                   )}
                 >
@@ -505,19 +629,27 @@ export function ChatWidget() {
                 </button>
               )}
 
-              <input
+              <textarea
                 ref={inputRef}
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
+                onKeyDown={(e) => {
+                  // Enter gửi, Shift+Enter xuống dòng; bỏ qua khi đang gõ IME.
+                  if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) {
+                    e.preventDefault();
+                    sendMessage();
+                  }
+                }}
                 placeholder={t("chat.placeholder")}
                 maxLength={2000}
-                className="h-10 flex-1 rounded-lg border border-border bg-background px-3 text-sm text-primary outline-none transition-colors focus:border-accent"
+                rows={1}
+                className="max-h-[7.5rem] min-h-11 flex-1 resize-none rounded-lg border border-border bg-background px-3 py-2.5 text-base leading-6 text-primary outline-none transition-colors focus:border-accent sm:text-sm"
               />
               <button
                 type="submit"
                 disabled={loading || (!input.trim() && !image)}
                 aria-label={t("chat.send")}
-                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary text-white transition-colors hover:bg-secondary disabled:opacity-40"
+                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-primary text-white transition-colors hover:bg-secondary disabled:opacity-40"
               >
                 {loading ? (
                   <Loader2 className="h-4 w-4 animate-spin" />

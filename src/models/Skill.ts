@@ -4,7 +4,6 @@ export interface ISkill {
   _id: string;
   name: string;
   category: "frontend" | "backend" | "database" | "devops" | "tools" | "other";
-  level: number; // 1-100
   icon?: string;
   order: number;
   visible: boolean;
@@ -20,7 +19,6 @@ const SkillSchema = new Schema<ISkill>(
       enum: ["frontend", "backend", "database", "devops", "tools", "other"],
       default: "other",
     },
-    level: { type: Number, min: 1, max: 100, default: 70 },
     icon: { type: String, default: "" },
     order: { type: Number, default: 0 },
     visible: { type: Boolean, default: true },

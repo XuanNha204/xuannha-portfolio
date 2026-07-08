@@ -68,7 +68,6 @@ export interface SkillDTO {
   _id: string;
   name: string;
   category: "frontend" | "backend" | "database" | "devops" | "tools" | "other";
-  level: number;
   icon?: string;
   order: number;
   visible: boolean;

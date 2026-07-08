@@ -202,12 +202,29 @@ export function Header({ siteName, logo }: HeaderProps) {
                   </Link>
                 );
               })}
-              <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-border pt-3">
-                {languageMenu}
+              <div className="mt-3 flex flex-col gap-3 border-t border-border pt-3">
+                <div className="grid grid-cols-3 gap-2">
+                  {LANGUAGES.map((item) => (
+                    <button
+                      key={item.value}
+                      type="button"
+                      onClick={() => chooseLanguage(item.value)}
+                      className={cn(
+                        "flex h-10 items-center justify-center gap-2 rounded-lg border text-sm font-medium transition-colors",
+                        language === item.value
+                          ? "border-accent bg-accent/10 text-accent"
+                          : "border-border bg-background text-secondary hover:border-accent hover:text-accent"
+                      )}
+                    >
+                      <FlagIcon language={item.value} />
+                      <span className="text-xs font-bold">{item.code}</span>
+                    </button>
+                  ))}
+                </div>
                 <button
                   type="button"
                   onClick={toggleTheme}
-                  className="ml-auto flex h-10 items-center gap-2 rounded-lg border border-border bg-background px-3 text-sm text-secondary"
+                  className="flex h-10 items-center justify-center gap-2 rounded-lg border border-border bg-background px-3 text-sm text-secondary"
                 >
                   {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
                   {theme === "dark" ? t("prefs.themeLight") : t("prefs.themeDark")}

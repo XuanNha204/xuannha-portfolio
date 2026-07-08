@@ -42,7 +42,7 @@ export async function getSkills(onlyVisible = true): Promise<SkillDTO[]> {
   try {
     await dbConnect();
     const filter = onlyVisible ? { visible: true } : {};
-    return serialize<SkillDTO[]>(await Skill.find(filter).sort({ order: 1, level: -1 }).lean());
+    return serialize<SkillDTO[]>(await Skill.find(filter).sort({ order: 1, name: 1 }).lean());
   } catch {
     return [];
   }
