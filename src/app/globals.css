@@ -1,27 +1,34 @@
 @import "tailwindcss";
 
 @theme {
-  /* Color palette — XuanNha.Dev design system */
-  --color-primary: #111827;
-  --color-secondary: #1f2937;
-  --color-accent: #3b82f6;
-  --color-accent-hover: #2563eb;
-  --color-background: #f8fafc;
+  /* Color palette — XuanNha.Dev design system (light) */
+  --color-primary: #18181b;
+  --color-secondary: #3f3f46;
+  --color-accent: #2563eb;
+  --color-accent-hover: #1d4ed8;
+  --color-accent-fg: #ffffff;
+  --color-background: #fafafa;
   --color-surface: #ffffff;
-  --color-border: #e5e7eb;
-  --color-muted: #6b7280;
+  --color-border: #e4e4e7;
+  --color-muted: #71717a;
   --color-success: #10b981;
   --color-warning: #f59e0b;
   --color-danger: #ef4444;
+
+  /* Inverse surface — near-black in light mode, near-white in dark mode.
+     Used for primary CTAs so they stay high-contrast in both themes. */
+  --color-inverse: #18181b;
+  --color-inverse-hover: #2d2d33;
+  --color-inverse-fg: #ffffff;
 
   /* Typography */
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-heading: var(--font-space-grotesk), var(--font-inter), ui-sans-serif, sans-serif;
   --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
 
-  --shadow-card: 0 1px 3px 0 rgb(17 24 39 / 0.06), 0 1px 2px -1px rgb(17 24 39 / 0.06);
+  --shadow-card: 0 1px 2px 0 rgb(24 24 27 / 0.04), 0 1px 4px -1px rgb(24 24 27 / 0.05);
   --shadow-card-hover:
-    0 12px 32px -8px rgb(17 24 39 / 0.14), 0 4px 12px -4px rgb(17 24 39 / 0.08);
+    0 16px 40px -12px rgb(24 24 27 / 0.12), 0 4px 12px -4px rgb(24 24 27 / 0.06);
 
   --animate-shimmer: shimmer 1.8s infinite;
   --animate-fade-in: fade-in 0.5s ease-out both;
@@ -69,37 +76,26 @@ body {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
 }
 
 html[data-site-theme="dark"] {
-  --color-primary: #f8fafc;
-  --color-secondary: #cbd5e1;
-  --color-background: #0b1120;
-  --color-surface: #111827;
-  --color-border: #273449;
-  --color-muted: #94a3b8;
-  --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.28), 0 1px 2px -1px rgb(0 0 0 / 0.2);
+  --color-primary: #f4f4f5;
+  --color-secondary: #d4d4d8;
+  --color-accent: #60a5fa;
+  --color-accent-hover: #93c5fd;
+  --color-accent-fg: #0a0f1e;
+  --color-background: #09090b;
+  --color-surface: #101014;
+  --color-border: #26262b;
+  --color-muted: #a1a1aa;
+  --color-inverse: #fafafa;
+  --color-inverse-hover: #e4e4e7;
+  --color-inverse-fg: #09090b;
+  --shadow-card: 0 1px 2px 0 rgb(0 0 0 / 0.4), 0 1px 4px -1px rgb(0 0 0 / 0.3);
   --shadow-card-hover:
-    0 16px 36px -12px rgb(0 0 0 / 0.42), 0 6px 16px -8px rgb(0 0 0 / 0.32);
+    0 20px 48px -16px rgb(0 0 0 / 0.55), 0 6px 16px -8px rgb(0 0 0 / 0.4);
   color-scheme: dark;
-}
-
-html[data-site-theme="dark"] .bg-primary {
-  background-color: #2563eb;
-}
-
-html[data-site-theme="dark"] .hover\:bg-secondary:hover {
-  background-color: #1d4ed8;
-}
-
-html[data-site-theme="dark"] .text-white {
-  color: #ffffff;
-}
-
-html[data-site-theme="dark"] .shadow-sm,
-html[data-site-theme="dark"] .shadow-md,
-html[data-site-theme="dark"] .shadow-lg {
-  box-shadow: var(--shadow-card);
 }
 
 h1,
@@ -109,11 +105,19 @@ h4,
 h5,
 h6 {
   font-family: var(--font-heading);
-  letter-spacing: -0.02em;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
 }
 
 ::selection {
-  background: color-mix(in srgb, var(--color-accent) 20%, transparent);
+  background: color-mix(in srgb, var(--color-accent) 25%, transparent);
+}
+
+/* Visible focus for keyboard navigation */
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: 2px;
 }
 
 /* Thin, subtle scrollbars */
@@ -122,15 +126,36 @@ h6 {
   scrollbar-color: var(--color-border) transparent;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 @utility container-page {
   margin-inline: auto;
   width: 100%;
   max-width: 76rem;
-  padding-inline: 1.25rem;
+  padding-inline: 1.5rem;
 
   @media (width >= 768px) {
-    padding-inline: 2rem;
+    padding-inline: 2.5rem;
   }
+}
+
+/* Frosted surface — used sparingly (header, overlays) */
+@utility glass {
+  background: color-mix(in srgb, var(--color-surface) 72%, transparent);
+  backdrop-filter: blur(20px) saturate(1.5);
+  -webkit-backdrop-filter: blur(20px) saturate(1.5);
 }
 
 @utility skeleton {
@@ -144,7 +169,12 @@ h6 {
     position: absolute;
     inset: 0;
     transform: translateX(-100%);
-    background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.6), transparent);
+    background: linear-gradient(
+      90deg,
+      transparent,
+      color-mix(in srgb, var(--color-primary) 8%, transparent),
+      transparent
+    );
     animation: shimmer 1.8s infinite;
   }
 }
@@ -221,8 +251,9 @@ h6 {
 }
 
 .prose-custom pre {
-  background: var(--color-primary);
-  color: #e5e7eb;
+  background: #101014;
+  color: #e4e4e7;
+  border: 1px solid #26262b;
   border-radius: 0.75rem;
   padding: 1.25rem;
   overflow-x: auto;

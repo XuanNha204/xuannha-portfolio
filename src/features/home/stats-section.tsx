@@ -18,16 +18,20 @@ export function StatsSection({ projects, posts, skills, views }: StatsSectionPro
   ];
 
   return (
-    <section className="border-y border-border bg-primary py-20 text-white">
+    <section className="border-y border-border bg-surface py-20 md:py-24">
       <div className="container-page">
-        <div className="grid grid-cols-2 gap-8 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-x-6 gap-y-12 lg:grid-cols-4">
           {stats.map((stat, i) => (
-            <Reveal key={stat.label} delay={i * 0.08} className="flex flex-col items-center text-center">
-              <stat.icon className="mb-3 h-7 w-7 text-accent" />
-              <p className="font-heading text-4xl font-bold">
+            <Reveal
+              key={stat.label}
+              delay={i * 0.08}
+              className="flex flex-col items-center text-center lg:border-l lg:border-border lg:first:border-l-0"
+            >
+              <stat.icon className="mb-4 h-6 w-6 text-accent" aria-hidden />
+              <p className="font-heading text-4xl font-bold tracking-tight text-primary md:text-5xl">
                 <AnimatedCounter value={stat.value} suffix="+" />
               </p>
-              <p className="mt-1 text-sm text-white/60">{stat.label}</p>
+              <p className="mt-2 text-sm text-muted">{stat.label}</p>
             </Reveal>
           ))}
         </div>

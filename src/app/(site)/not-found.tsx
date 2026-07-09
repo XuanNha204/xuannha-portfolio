@@ -13,9 +13,9 @@ export default function NotFound() {
       </p>
       <Link
         href="/"
-        className="mt-8 inline-flex h-11 items-center gap-2 rounded-lg bg-primary px-6 text-sm font-medium text-white shadow-md transition-all hover:-translate-y-0.5 hover:bg-secondary"
+        className="mt-8 inline-flex h-11 items-center gap-2 rounded-full bg-inverse px-6 text-sm font-medium text-inverse-fg transition-colors duration-200 hover:bg-inverse-hover"
       >
-        <Home className="h-4 w-4" /> Về trang chủ
+        <Home className="h-4 w-4" aria-hidden /> Về trang chủ
       </Link>
     </div>
   );

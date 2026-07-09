@@ -19,16 +19,16 @@ export default async function ProjectsPage() {
   const rest = projects.filter((p) => !p.featured);
 
   return (
-    <div className="py-20">
+    <div className="py-24 md:py-28">
       <div className="container-page">
-        <Reveal className="mb-14 max-w-2xl">
-          <span className="font-mono text-xs font-medium uppercase tracking-widest text-accent">
+        <Reveal className="mb-16 max-w-2xl">
+          <span className="font-mono text-xs font-medium uppercase tracking-[0.2em] text-accent">
             {"// projects"}
           </span>
-          <h1 className="mt-3 font-heading text-4xl font-bold text-primary md:text-5xl">
+          <h1 className="mt-4 font-heading text-4xl font-bold tracking-tight text-primary md:text-5xl">
             Dự án của tôi
           </h1>
-          <p className="mt-4 text-lg text-muted">
+          <p className="mt-5 text-pretty text-lg leading-relaxed text-muted">
             {projects.length > 0
               ? `${projects.length} dự án — kéo ngang hoặc dùng nút điều hướng để khám phá.`
               : "Danh sách dự án sẽ sớm được cập nhật."}

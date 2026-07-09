@@ -205,7 +205,8 @@ const SitePreferencesContext = createContext<SitePreferencesContextValue | null>
 
 export function SitePreferencesProvider({ children }: { children: React.ReactNode }) {
   const [language, setLanguageState] = useState<SiteLanguage>("vi");
-  const [theme, setThemeState] = useState<SiteTheme>("light");
+  // Dark mode first — light is an explicit opt-in persisted in localStorage.
+  const [theme, setThemeState] = useState<SiteTheme>("dark");
 
   useEffect(() => {
     const savedLanguage = window.localStorage.getItem(STORAGE_KEYS.language);

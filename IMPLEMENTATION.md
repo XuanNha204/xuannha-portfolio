@@ -542,3 +542,89 @@ npm.cmd run build   # ✅ pass — 40 routes
 ```
 
 Nghiệm thu thủ công đề xuất: mở chat ở 360×640 / 390×844 / 414×896 (phải phủ kín màn hình), gõ câu hỏi dài 150-200 ký tự (textarea giãn dòng), test iOS Safari (không auto-zoom), click card dự án ở `/projects` (điều hướng bình thường, kéo ngang vẫn hoạt động).
+
+---
+
+## 14. Redesign toàn diện — Premium Developer Portfolio (dark mode first)
+
+Ngày 09/07/2026, nâng cấp toàn bộ chất lượng thiết kế theo hướng **Modern Clean / Apple / Vercel / Linear**: tối giản, thanh lịch, glassmorphism có chọn lọc, **dark mode làm mặc định**. Không thay đổi nội dung, không bỏ tính năng nào — chỉ cải thiện thiết kế.
+
+### 14.1. Design system mới (`src/app/globals.css`)
+
+**Bảng màu dark-first (phong cách Vercel/Linear):**
+
+| Token | Light | Dark |
+|---|---|---|
+| `background` | `#fafafa` | `#09090b` (near-black) |
+| `surface` | `#ffffff` | `#101014` |
+| `border` | `#e4e4e7` | `#26262b` |
+| `primary` (text) | `#18181b` | `#f4f4f5` |
+| `accent` | `#2563eb` | `#60a5fa` |
+
+- Accent chỉnh theo từng theme để đạt **WCAG AA 4.5:1** (màu cũ `#3b82f6` trên nền trắng chỉ đạt ~3.7:1).
+- **Token mới `inverse` / `inverse-fg` / `inverse-hover`**: nút CTA chính kiểu Vercel — nền đen chữ trắng ở light mode, nền trắng chữ đen ở dark mode. Thay thế hoàn toàn các hack CSS cũ (`html[dark] .bg-primary {...}`, `.text-white {...}`) vốn dễ vỡ.
+- **Token mới `accent-fg`**: màu chữ an toàn trên nền accent ở cả 2 theme (trắng trên xanh đậm / chữ tối trên xanh nhạt) — dùng cho chip lọc blog, bubble chat, nút accent.
+- Bổ sung: `:focus-visible` ring toàn cục cho điều hướng bàn phím; `@media (prefers-reduced-motion: reduce)` tắt animation; utility `glass` (frosted blur — chỉ dùng cho header và bề mặt nổi); font features Inter (`cv02/cv03/cv04/cv11`); `text-wrap: balance` cho heading; shadow tinh tế hơn theo theme; code block Markdown luôn nền tối có viền (fix vỡ ở dark mode); skeleton shimmer theo token thay vì trắng cứng; `container-page` padding rộng hơn.
+
+### 14.2. Dark mode mặc định, không flash
+
+| File | Thay đổi |
+|---|---|
+| `src/components/site/site-preferences.tsx` | State theme mặc định `"dark"`; light là opt-in lưu localStorage |
+| `src/app/(site)/layout.tsx` | Inline script chạy **trước khi paint**: đọc `localStorage` → gắn `data-site-theme` ngay, không còn flash trắng khi tải trang |
+| `src/app/layout.tsx` | Thêm `suppressHydrationWarning` trên `<html>` |
+| `src/components/providers.tsx` | Bọc `MotionConfig reducedMotion="user"` — framer-motion tôn trọng cài đặt giảm chuyển động của hệ điều hành |
+
+Admin (`/admin`) không bị ảnh hưởng — vẫn giữ theme sáng vì provider chỉ bọc public site.
+
+### 14.3. Redesign từng khu vực
+
+| Khu vực | Thay đổi chính |
+|---|---|
+| **Hero** (`hero.tsx`) | `min-h-100svh`, grid nền mờ hơn + glow accent, badge kiểu glass, headline scale mượt hơn (`sm/md/lg`), CTA dạng **pill** dùng token inverse, social buttons tròn. Avatar **giữ nguyên kiểu hiển thị cũ** theo yêu cầu |
+| **Navigation** (`header.tsx`) | Header dùng utility `glass` khi cuộn; nav link màu muted → primary, active indicator mảnh 1px; CTA pill inverse; menu ngôn ngữ item chọn dùng `accent/10` thay nền đặc; mobile menu nền glass |
+| **Project/Blog cards** | `rounded-2xl`, padding `p-6`, ảnh zoom chậm 700ms + overlay gradient khi hover, hover lift + border accent nhẹ, `cursor-pointer` |
+| **Skills** (`skills-section.tsx`) | Card `rounded-2xl p-7` có hover border; label category kèm chấm accent; chip kỹ năng có hover feedback |
+| **Timeline** (`about/page.tsx`) | Marker mới dạng vòng + chấm accent, đường nối gradient mờ dần, ngày tháng mono uppercase, khoảng cách `space-y-10`, icon section có viền |
+| **Stats** (`stats-section.tsx`) | Bỏ panel `bg-primary` (phụ thuộc hack cũ, vỡ ở dark) → dải bordered dùng token, số to `text-5xl`, phân cách cột bằng border trái |
+| **Contact** (`contact/page.tsx`) | Card `rounded-2xl`, spacing rộng hơn, input nền `background` + focus ring mềm, hover states tinh chỉnh |
+| **Footer** (`footer.tsx`) | `py-16/20`, tiêu đề cột mono uppercase tracking rộng, link muted → primary khi hover, social buttons tròn |
+| **Contact CTA** (`contact-cta.tsx`) | `rounded-3xl py-20/24`, glow lớn hơn, nút pill inverse |
+| **SectionHeading** | Eyebrow đổi từ pill sang **mono uppercase `tracking-[0.2em]`** (thống nhất toàn site), `mb-14/16`, description `text-pretty` |
+| Trang `/projects`, `/blog` | Đồng bộ hero heading (`py-24/28`, tracking-tight, eyebrow mới) |
+
+Nhịp section thống nhất toàn trang chủ: `py-24 md:py-32`.
+
+### 14.4. UI primitives & dọn dẹp hack
+
+| File | Thay đổi |
+|---|---|
+| `ui/button.tsx` | Variant `default` → token inverse; `accent` → `text-accent-fg`; bỏ translate-y gây layout shift; focus ring có `ring-offset-background`; `cursor-pointer` |
+| `ui/badge.tsx` | Variant `mono` → `bg-inverse text-inverse-fg` (trước đây vỡ ở dark mode) |
+| `ui/input.tsx` + `ui/textarea.tsx` | Nền `background`, `h-11` (touch target), focus ring mềm `accent/30`, hover border |
+| `ui/dialog.tsx` | Overlay `bg-primary/40` (thành trắng mờ ở dark — bug) → `bg-black/55` |
+| `chat-widget.tsx` | Nút nổi/header/nút gửi → token inverse; bubble user → `text-accent-fg` |
+| `not-found.tsx`, `projects/[slug]` | Nút CTA → pill inverse; nút phụ → outline trung tính |
+| `(site)/blog/page.tsx` | Chip lọc + phân trang active → `text-accent-fg` |
+| `globals.css` | **Xóa hẳn** các override hack: `html[dark] .bg-primary`, `.hover:bg-secondary`, `.text-white`, override shadow |
+
+> Ghi chú (09/07/2026): avatar ở Hero, About Preview và trang About ban đầu được ép về khung tròn/vuông cố định, nhưng theo yêu cầu đã **khôi phục kiểu hiển thị avatar như thiết kế cũ** (tỷ lệ ảnh gốc, class như trước redesign) ở cả 3 vị trí.
+
+### 14.5. Accessibility
+
+- `aria-hidden` cho toàn bộ icon trang trí.
+- Focus ring hiển thị rõ khi Tab (toàn cục + từng component).
+- `prefers-reduced-motion` được tôn trọng ở cả CSS lẫn framer-motion.
+- Contrast màu accent/muted đạt AA ở cả 2 theme; nút accent luôn dùng `accent-fg`.
+- Touch target ≥ 44px cho input và nút tương tác chính.
+
+### Kiểm tra
+
+```bash
+npx tsc --noEmit    # ✅ pass
+npx eslint          # ✅ pass — không warning/error
+npm run build       # ✅ pass — build production thành công
+```
+
+- Nghiệm thu trực quan bằng Chrome trên `localhost:3000`: hero/about/projects/stats/skills/blog/CTA/footer ở **dark mode mặc định** ✅; toggle sang light mode hiển thị đúng ✅; trang `/about` (timeline), `/contact` (form + sidebar) ✅; xóa `localStorage` → mặc định vào dark, không flash ✅.
+- Lưu ý: trình duyệt đã từng chọn light sẽ giữ light (đúng thiết kế — tôn trọng lựa chọn đã lưu); khách mới luôn thấy dark.

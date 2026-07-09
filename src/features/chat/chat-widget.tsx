@@ -343,7 +343,7 @@ export function ChatWidget() {
         initial={{ scale: 0, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ delay: 0.4, type: "spring", stiffness: 260, damping: 20 }}
-        className="fixed bottom-[calc(1.25rem+env(safe-area-inset-bottom))] right-5 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-white shadow-lg transition-colors hover:bg-secondary"
+        className="fixed bottom-[calc(1.25rem+env(safe-area-inset-bottom))] right-5 z-50 flex h-14 w-14 cursor-pointer items-center justify-center rounded-full bg-inverse text-inverse-fg shadow-[var(--shadow-card-hover)] transition-colors hover:bg-inverse-hover"
       >
         <AnimatePresence mode="wait" initial={false}>
           <motion.span
@@ -369,13 +369,13 @@ export function ChatWidget() {
             className="fixed left-0 top-0 z-50 flex h-dvh w-full flex-col overflow-hidden bg-surface sm:bottom-[calc(6rem+env(safe-area-inset-bottom))] sm:left-auto sm:right-5 sm:top-auto sm:h-[34rem] sm:max-h-[calc(100vh-8rem)] sm:w-[calc(100vw-2.5rem)] sm:max-w-sm sm:rounded-2xl sm:border sm:border-border sm:shadow-2xl"
           >
             {/* Header */}
-            <div className="flex min-h-14 items-center gap-3 border-b border-border bg-primary px-4 py-3 pt-[calc(0.75rem+env(safe-area-inset-top))] text-white sm:pt-3">
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/15">
+            <div className="flex min-h-14 items-center gap-3 border-b border-border bg-inverse px-4 py-3 pt-[calc(0.75rem+env(safe-area-inset-top))] text-inverse-fg sm:pt-3">
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-inverse-fg/15">
                 <Bot className="h-5 w-5" />
               </span>
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-semibold">{t("chat.title")}</p>
-                <p className="truncate text-xs text-white/70">
+                <p className="truncate text-xs text-inverse-fg/70">
                   {listening ? t("chat.listening") : t("chat.subtitle")}
                 </p>
               </div>
@@ -383,7 +383,7 @@ export function ChatWidget() {
                 type="button"
                 onClick={() => setOpen(false)}
                 aria-label={t("chat.close")}
-                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg text-white/80 transition-colors hover:bg-white/10 hover:text-white"
+                className="flex h-11 w-11 shrink-0 cursor-pointer items-center justify-center rounded-lg text-inverse-fg/80 transition-colors hover:bg-inverse-fg/10 hover:text-inverse-fg"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -430,7 +430,7 @@ export function ChatWidget() {
                     className={cn(
                       "max-w-[80%] rounded-2xl px-3 py-2 text-sm",
                       msg.role === "user"
-                        ? "rounded-tr-sm bg-accent text-white"
+                        ? "rounded-tr-sm bg-accent text-accent-fg"
                         : "rounded-tl-sm bg-border/40 text-secondary"
                     )}
                   >
@@ -570,7 +570,7 @@ export function ChatWidget() {
                   <button
                     type="button"
                     onClick={() => setImage(null)}
-                    className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-white"
+                    className="absolute -right-1.5 -top-1.5 flex h-5 w-5 cursor-pointer items-center justify-center rounded-full bg-inverse text-inverse-fg"
                     aria-label={t("chat.close")}
                   >
                     <X className="h-3 w-3" />
@@ -649,7 +649,7 @@ export function ChatWidget() {
                 type="submit"
                 disabled={loading || (!input.trim() && !image)}
                 aria-label={t("chat.send")}
-                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-primary text-white transition-colors hover:bg-secondary disabled:opacity-40"
+                className="flex h-11 w-11 shrink-0 cursor-pointer items-center justify-center rounded-lg bg-inverse text-inverse-fg transition-colors hover:bg-inverse-hover disabled:opacity-40"
               >
                 {loading ? (
                   <Loader2 className="h-4 w-4 animate-spin" />

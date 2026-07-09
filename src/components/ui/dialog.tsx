@@ -40,7 +40,7 @@ export function Dialog({ open, onClose, title, children, className }: DialogProp
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
         >
-          <div className="absolute inset-0 bg-primary/40 backdrop-blur-sm" onClick={onClose} />
+          <div className="absolute inset-0 bg-black/55 backdrop-blur-sm" onClick={onClose} />
           <motion.div
             role="dialog"
             aria-modal="true"

@@ -123,9 +123,9 @@ export default async function ProjectDetailPage({ params }: Params) {
                 href={project.demoUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex h-11 items-center gap-2 rounded-lg bg-accent px-5 text-sm font-medium text-white shadow-md transition-all hover:-translate-y-0.5 hover:bg-accent-hover"
+                className="inline-flex h-11 items-center gap-2 rounded-full bg-inverse px-5 text-sm font-medium text-inverse-fg transition-colors duration-200 hover:bg-inverse-hover"
               >
-                <ExternalLink className="h-4 w-4" /> Xem demo
+                <ExternalLink className="h-4 w-4" aria-hidden /> Xem demo
               </a>
             )}
             {project.githubUrl && (
@@ -133,7 +133,7 @@ export default async function ProjectDetailPage({ params }: Params) {
                 href={project.githubUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex h-11 items-center gap-2 rounded-lg border border-border bg-surface px-5 text-sm font-medium text-primary shadow-sm transition-all hover:-translate-y-0.5 hover:border-accent hover:text-accent"
+                className="inline-flex h-11 items-center gap-2 rounded-full border border-border bg-surface px-5 text-sm font-medium text-primary transition-colors duration-200 hover:border-muted/50"
               >
                 <Github className="h-4 w-4" /> Mã nguồn
               </a>
@@ -143,7 +143,7 @@ export default async function ProjectDetailPage({ params }: Params) {
                 href={project.videoUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex h-11 items-center gap-2 rounded-lg border border-border bg-surface px-5 text-sm font-medium text-primary shadow-sm transition-all hover:-translate-y-0.5 hover:border-accent hover:text-accent"
+                className="inline-flex h-11 items-center gap-2 rounded-full border border-border bg-surface px-5 text-sm font-medium text-primary transition-colors duration-200 hover:border-muted/50"
               >
                 <PlayCircle className="h-4 w-4" /> Video demo
               </a>

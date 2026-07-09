@@ -24,7 +24,7 @@ export function SkillsSection({ skills }: { skills: SkillDTO[] }) {
   const categories = Object.keys(CATEGORY_LABELS).filter((c) => grouped[c]?.length);
 
   return (
-    <section className="py-24">
+    <section className="py-24 md:py-32">
       <div className="container-page">
         <SectionHeading
           eyebrow="// skills"
@@ -47,16 +47,17 @@ export function SkillsSection({ skills }: { skills: SkillDTO[] }) {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-60px" }}
                 transition={{ duration: 0.5, delay: i * 0.08 }}
-                className="rounded-xl border border-border bg-surface p-6 shadow-[var(--shadow-card)]"
+                className="rounded-2xl border border-border bg-surface p-7 shadow-[var(--shadow-card)] transition-colors duration-300 hover:border-accent/25"
               >
-                <h3 className="mb-5 font-mono text-sm font-semibold uppercase tracking-wider text-accent">
+                <h3 className="mb-6 flex items-center gap-2.5 font-mono text-xs font-semibold uppercase tracking-[0.15em] text-accent">
+                  <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-accent" />
                   {CATEGORY_LABELS[category]}
                 </h3>
                 <div className="flex flex-wrap gap-2">
                   {grouped[category].map((skill) => (
                     <span
                       key={skill._id}
-                      className="rounded-full border border-border bg-background px-3 py-1 text-sm font-medium text-primary"
+                      className="rounded-full border border-border bg-background px-3.5 py-1.5 text-sm font-medium text-secondary transition-colors duration-200 hover:border-accent/40 hover:text-primary"
                     >
                       {skill.name}
                     </span>

@@ -8,7 +8,7 @@ import { RevealGroup, RevealItem, Reveal } from "@/components/motion/reveal";
 
 export function FeaturedProjects({ projects }: { projects: ProjectDTO[] }) {
   return (
-    <section className="py-24">
+    <section className="py-24 md:py-32">
       <div className="container-page">
         <SectionHeading
           eyebrow="// projects"
@@ -32,13 +32,16 @@ export function FeaturedProjects({ projects }: { projects: ProjectDTO[] }) {
           </RevealGroup>
         )}
 
-        <Reveal className="mt-12 text-center">
+        <Reveal className="mt-14 text-center">
           <Link
             href="/projects"
-            className="group inline-flex items-center gap-2 rounded-lg border border-border bg-surface px-6 py-3 font-medium text-primary shadow-sm transition-all hover:-translate-y-0.5 hover:border-accent hover:text-accent"
+            className="group inline-flex h-12 items-center gap-2 rounded-full border border-border bg-surface px-7 text-[15px] font-medium text-primary transition-colors duration-200 hover:border-muted/50"
           >
             Xem tất cả dự án
-            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+            <ArrowRight
+              className="h-4 w-4 text-muted transition-transform duration-200 group-hover:translate-x-0.5"
+              aria-hidden
+            />
           </Link>
         </Reveal>
       </div>

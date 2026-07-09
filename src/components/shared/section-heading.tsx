@@ -19,18 +19,22 @@ export function SectionHeading({
   return (
     <Reveal
       className={cn(
-        "mb-12 flex flex-col gap-3",
+        "mb-14 flex flex-col gap-4 md:mb-16",
         align === "center" ? "items-center text-center" : "items-start text-left",
         className
       )}
     >
       {eyebrow && (
-        <span className="rounded-full border border-accent/20 bg-accent/10 px-3 py-1 font-mono text-xs font-medium text-accent">
+        <span className="font-mono text-xs font-medium uppercase tracking-[0.2em] text-accent">
           {eyebrow}
         </span>
       )}
       <h2 className="text-3xl font-bold tracking-tight text-primary md:text-4xl">{title}</h2>
-      {description && <p className="max-w-2xl text-base text-muted">{description}</p>}
+      {description && (
+        <p className="max-w-2xl text-pretty text-base leading-relaxed text-muted md:text-lg">
+          {description}
+        </p>
+      )}
     </Reveal>
   );
 }

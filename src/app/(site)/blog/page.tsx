@@ -41,14 +41,16 @@ export default async function BlogPage({ searchParams }: { searchParams: SearchP
   };
 
   return (
-    <div className="py-20">
+    <div className="py-24 md:py-28">
       <div className="container-page">
-        <Reveal className="mb-12 max-w-2xl">
-          <span className="font-mono text-xs font-medium uppercase tracking-widest text-accent">
+        <Reveal className="mb-14 max-w-2xl">
+          <span className="font-mono text-xs font-medium uppercase tracking-[0.2em] text-accent">
             {"// blog"}
           </span>
-          <h1 className="mt-3 font-heading text-4xl font-bold text-primary md:text-5xl">Blog</h1>
-          <p className="mt-4 text-lg text-muted">
+          <h1 className="mt-4 font-heading text-4xl font-bold tracking-tight text-primary md:text-5xl">
+            Blog
+          </h1>
+          <p className="mt-5 text-pretty text-lg leading-relaxed text-muted">
             Kiến thức, kinh nghiệm và góc nhìn về phát triển phần mềm hiện đại.
           </p>
         </Reveal>
@@ -74,7 +76,7 @@ export default async function BlogPage({ searchParams }: { searchParams: SearchP
                 className={cn(
                   "rounded-full border px-4 py-1.5 text-sm font-medium transition-colors",
                   !category
-                    ? "border-accent bg-accent text-white"
+                    ? "border-accent bg-accent text-accent-fg"
                     : "border-border bg-surface text-secondary hover:border-accent hover:text-accent"
                 )}
               >
@@ -87,7 +89,7 @@ export default async function BlogPage({ searchParams }: { searchParams: SearchP
                   className={cn(
                     "rounded-full border px-4 py-1.5 text-sm font-medium transition-colors",
                     category === cat.slug
-                      ? "border-accent bg-accent text-white"
+                      ? "border-accent bg-accent text-accent-fg"
                       : "border-border bg-surface text-secondary hover:border-accent hover:text-accent"
                   )}
                 >
@@ -124,7 +126,7 @@ export default async function BlogPage({ searchParams }: { searchParams: SearchP
                 className={cn(
                   "flex h-10 w-10 items-center justify-center rounded-lg border text-sm font-medium transition-colors",
                   p === result.page
-                    ? "border-accent bg-accent text-white"
+                    ? "border-accent bg-accent text-accent-fg"
                     : "border-border bg-surface text-secondary hover:border-accent hover:text-accent"
                 )}
               >

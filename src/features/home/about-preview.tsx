@@ -7,7 +7,7 @@ import { SectionHeading } from "@/components/shared/section-heading";
 
 export function AboutPreview({ profile }: { profile: ProfileDTO }) {
   return (
-    <section className="border-y border-border bg-surface py-24">
+    <section className="border-y border-border bg-surface py-24 md:py-32">
       <div className="container-page">
         <SectionHeading
           eyebrow="// about"
@@ -50,10 +50,13 @@ export function AboutPreview({ profile }: { profile: ProfileDTO }) {
             </p>
             <Link
               href="/about"
-              className="group mt-6 inline-flex items-center gap-2 font-medium text-accent"
+              className="group mt-8 inline-flex items-center gap-2 font-medium text-accent transition-colors duration-200 hover:text-accent-hover"
             >
               Tìm hiểu thêm về tôi
-              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+              <ArrowRight
+                className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1"
+                aria-hidden
+              />
             </Link>
           </Reveal>
         </div>
