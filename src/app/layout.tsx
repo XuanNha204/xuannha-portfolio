@@ -25,6 +25,31 @@ const jetbrainsMono = JetBrains_Mono({
   display: "swap",
 });
 
+/** Hash ngắn để version hóa URL favicon — đổi ảnh trong CMS là đổi URL, khỏi kẹt cache. */
+function shortHash(input: string): string {
+  let h = 5381;
+  for (let i = 0; i < input.length; i++) {
+    h = ((h << 5) + h + input.charCodeAt(i)) >>> 0;
+  }
+  return h.toString(36);
+}
+
+/**
+ * Favicon do CMS quản lý (Cài đặt > Favicon):
+ * - data URL (upload từ CMS) → trỏ qua /api/favicon để không phình <head>.
+ * - URL http(s) → dùng trực tiếp.
+ * - Chưa cấu hình → bộ icon tĩnh mặc định trong /public.
+ */
+function faviconIcons(favicon: string | undefined): Metadata["icons"] {
+  if (favicon) {
+    const url = favicon.startsWith("data:")
+      ? `/api/favicon?v=${shortHash(favicon)}`
+      : favicon;
+    return { icon: url, shortcut: url, apple: url };
+  }
+  return { icon: "/icon.png", shortcut: "/favicon.ico", apple: "/apple-icon.png" };
+}
+
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSiteSettings();
   const title = settings.seo?.metaTitle || `${settings.siteName} — ${settings.tagline}`;
@@ -54,7 +79,7 @@ export async function generateMetadata(): Promise<Metadata> {
       title,
       description,
     },
-    ...(settings.favicon ? { icons: { icon: settings.favicon } } : {}),
+    icons: faviconIcons(settings.favicon),
     alternates: {
       canonical: absoluteUrl(),
       types: { "application/rss+xml": absoluteUrl("/rss.xml") },

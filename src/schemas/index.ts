@@ -160,7 +160,15 @@ export const siteSettingsSchema = z.object({
   siteName: z.string().min(1).max(100),
   tagline: z.string().max(200).optional().or(z.literal("")),
   logo: z.string().optional().or(z.literal("")),
-  favicon: z.string().optional().or(z.literal("")),
+  favicon: z
+    .string()
+    .max(4_000_000, "Favicon tối đa 3MB")
+    .refine(
+      (value) => value === "" || value.startsWith("data:image/") || /^https?:\/\//.test(value),
+      { message: "Favicon phải là file ảnh" }
+    )
+    .optional()
+    .or(z.literal("")),
   seo: z
     .object({
       metaTitle: z.string().optional().or(z.literal("")),

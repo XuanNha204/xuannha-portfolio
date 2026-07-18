@@ -78,6 +78,7 @@ export function SettingsForm() {
   }, [settings, reset]);
 
   const logo = watch("logo");
+  const favicon = watch("favicon");
   const ogImage = watch("ogImage");
 
   async function onSubmit(values: FormValues) {
@@ -189,6 +190,25 @@ export function SettingsForm() {
                 onChange={(url) => setValue("logo", url, { shouldDirty: true })}
                 folder="xuannha-dev/site"
               />
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">Favicon</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <ImageUpload
+                value={favicon}
+                onChange={(url) => setValue("favicon", url, { shouldDirty: true })}
+                folder="xuannha-dev/site"
+                accept="image/png,image/jpeg,image/webp,image/svg+xml,image/x-icon,.ico"
+                label="Tải favicon lên"
+              />
+              <p className="text-xs text-muted">
+                Ảnh vuông, tối thiểu 64×64px (khuyến nghị 256×256). Để trống sẽ dùng icon mặc
+                định của website.
+              </p>
             </CardContent>
           </Card>
 
