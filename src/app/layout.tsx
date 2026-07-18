@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Space_Grotesk, JetBrains_Mono } from "next/font/google";
+import NextTopLoader from "nextjs-toploader";
 import { getSiteSettings } from "@/services/settings.service";
 import { Providers } from "@/components/providers";
 import { AnalyticsTracker } from "@/components/analytics-tracker";
@@ -72,6 +73,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       className={`${inter.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable}`}
     >
       <body className="min-h-screen font-sans antialiased">
+        {/* Thanh progress chạy ngay khi bắt đầu điều hướng — phản hồi tức thì
+            thay cho màn hình trắng. Màu lấy từ --color-accent nên tự khớp theme. */}
+        <NextTopLoader
+          color="var(--color-accent)"
+          height={2}
+          showSpinner={false}
+          shadow="0 0 8px var(--color-accent)"
+        />
         <Providers>
           {children}
           <AnalyticsTracker />

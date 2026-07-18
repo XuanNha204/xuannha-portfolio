@@ -104,6 +104,9 @@ export function ChatWidget() {
   const fileRef = useRef<HTMLInputElement>(null);
   const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
   const noticeTimer = useRef<number | null>(null);
+  // true khi người dùng đang ở (gần) cuối danh sách — chỉ khi đó mới auto-scroll
+  // lúc có tin mới, để không kéo tuột xuống khi họ đang đọc lại tin cũ.
+  const stickToBottomRef = useRef(true);
 
   const speechLang = language === "zh" ? "zh-CN" : language === "en" ? "en-US" : "vi-VN";
 
@@ -111,7 +114,14 @@ export function ChatWidget() {
     setVoiceSupported(!!getSpeechRecognition());
   }, []);
 
+  function handleMessagesScroll() {
+    const el = scrollRef.current;
+    if (!el) return;
+    stickToBottomRef.current = el.scrollHeight - el.scrollTop - el.clientHeight < 80;
+  }
+
   useEffect(() => {
+    if (!stickToBottomRef.current) return;
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [messages, loading]);
 
@@ -230,6 +240,9 @@ export function ChatWidget() {
     const img = image;
     if ((!text && !img) || loading) return;
 
+    // Tự gửi tin thì luôn nhảy xuống cuối, kể cả đang đọc dở tin cũ.
+    stickToBottomRef.current = true;
+
     const history: ChatMessage[] = [
       ...messages,
       { role: "user", content: text, image: img || undefined },
@@ -257,13 +270,13 @@ export function ChatWidget() {
       };
     });
 
-    // Timeout 120s: chỉ hủy nếu chưa nhận được byte nào (stream đã chạy thì để chạy tiếp).
+    // Timeout 60s: chỉ hủy nếu chưa nhận được byte nào (stream đã chạy thì để chạy tiếp).
     // Ngưỡng rộng vì server có thể phải failover qua nhiều provider/model trước khi trả lời.
     const controller = new AbortController();
     let gotFirstChunk = false;
     const timeoutTimer = window.setTimeout(() => {
       if (!gotFirstChunk) controller.abort();
-    }, 120_000);
+    }, 90_000);
 
     try {
       const res = await fetch("/api/chat", {
@@ -363,6 +376,10 @@ export function ChatWidget() {
       <AnimatePresence>
         {open && (
           <motion.div
+            // Lenis bắt wheel/touch ở mức document và preventDefault để cuộn trang;
+            // data-lenis-prevent bảo nó bỏ qua sự kiện bên trong panel, trả lại
+            // hành vi cuộn native cho khung tin nhắn và ô nhập.
+            data-lenis-prevent
             initial={isMobile ? { y: "100%" } : { opacity: 0, y: 24, scale: 0.96 }}
             animate={isMobile ? { y: 0 } : { opacity: 1, y: 0, scale: 1 }}
             exit={isMobile ? { y: "100%" } : { opacity: 0, y: 24, scale: 0.96 }}
@@ -390,8 +407,13 @@ export function ChatWidget() {
               </button>
             </div>
 
-            {/* Danh sách tin nhắn */}
-            <div ref={scrollRef} className="flex-1 space-y-3 overflow-y-auto px-4 py-4">
+            {/* Danh sách tin nhắn — overscroll-contain: cuộn hết khung không lan ra
+                trang phía sau; -webkit-overflow-scrolling: cuộn quán tính trên iOS. */}
+            <div
+              ref={scrollRef}
+              onScroll={handleMessagesScroll}
+              className="flex-1 space-y-3 overflow-y-auto overflow-x-hidden overscroll-contain px-4 py-4 [-webkit-overflow-scrolling:touch]"
+            >
               {messages.length === 0 && (
                 <>
                   <div className="flex gap-2">
