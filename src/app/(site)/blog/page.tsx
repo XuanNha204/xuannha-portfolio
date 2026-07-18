@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { FileText, Search } from "lucide-react";
+import { FileText } from "lucide-react";
 import { getPublishedPosts, getCategories } from "@/services/blog.service";
 import { BlogCard } from "@/components/shared/blog-card";
 import { EmptyState } from "@/components/shared/empty-state";
 import { Reveal, RevealGroup, RevealItem } from "@/components/motion/reveal";
+import { BlogSearchInput } from "@/components/site/blog-search-input";
+import { T } from "@/components/site/site-preferences";
 import { cn } from "@/lib/utils";
 
 export const revalidate = 60;
@@ -51,21 +53,14 @@ export default async function BlogPage({ searchParams }: { searchParams: SearchP
             Blog
           </h1>
           <p className="mt-5 text-pretty text-lg leading-relaxed text-muted">
-            Kiến thức, kinh nghiệm và góc nhìn về phát triển phần mềm hiện đại.
+            <T k="blog.description" />
           </p>
         </Reveal>
 
         {/* Search + category filter */}
         <Reveal className="mb-10 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <form action="/blog" className="relative w-full max-w-sm">
-            <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
-            <input
-              type="search"
-              name="q"
-              defaultValue={q}
-              placeholder="Tìm kiếm bài viết…"
-              className="h-11 w-full rounded-lg border border-border bg-surface pl-10 pr-4 text-sm shadow-sm transition-colors placeholder:text-muted focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/50"
-            />
+            <BlogSearchInput defaultValue={q} />
             {category && <input type="hidden" name="category" value={category} />}
           </form>
 
@@ -80,7 +75,7 @@ export default async function BlogPage({ searchParams }: { searchParams: SearchP
                     : "border-border bg-surface text-secondary hover:border-accent hover:text-accent"
                 )}
               >
-                Tất cả
+                <T k="blog.all" />
               </Link>
               {categories.map((cat) => (
                 <Link
@@ -103,8 +98,16 @@ export default async function BlogPage({ searchParams }: { searchParams: SearchP
         {result.items.length === 0 ? (
           <EmptyState
             icon={<FileText className="h-6 w-6" />}
-            title={q ? `Không tìm thấy bài viết cho “${q}”` : "Chưa có bài viết nào"}
-            description="Thử từ khóa khác hoặc quay lại sau nhé."
+            title={
+              q ? (
+                <>
+                  <T k="blog.notFoundPrefix" /> “{q}”
+                </>
+              ) : (
+                <T k="blog.emptyTitle" />
+              )
+            }
+            description={<T k="blog.emptyDesc" />}
           />
         ) : (
           <RevealGroup className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">

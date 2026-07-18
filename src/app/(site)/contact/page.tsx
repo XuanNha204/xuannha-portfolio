@@ -4,6 +4,7 @@ import { getProfile, getSocialLinks } from "@/services/profile.service";
 import { ContactForm } from "@/features/contact/contact-form";
 import { SocialIcon } from "@/components/shared/social-icon";
 import { Reveal } from "@/components/motion/reveal";
+import { T } from "@/components/site/site-preferences";
 
 export const revalidate = 60;
 
@@ -23,11 +24,10 @@ export default async function ContactPage() {
             {"// contact"}
           </span>
           <h1 className="mt-4 font-heading text-4xl font-bold tracking-tight text-primary md:text-5xl">
-            Liên hệ với tôi
+            <T k="contact.title" />
           </h1>
           <p className="mt-5 text-pretty text-lg leading-relaxed text-muted">
-            Có dự án cần xây dựng, cơ hội hợp tác hay đơn giản muốn trò chuyện về công nghệ? Gửi
-            tin nhắn cho tôi bên dưới.
+            <T k="contact.description" />
           </p>
         </Reveal>
 
@@ -42,7 +42,7 @@ export default async function ContactPage() {
             <div className="space-y-6">
               <div className="rounded-2xl border border-border bg-surface p-6 shadow-[var(--shadow-card)] md:p-7">
                 <h2 className="font-heading text-lg font-semibold tracking-tight text-primary">
-                  Thông tin liên hệ
+                  <T k="contact.info" />
                 </h2>
                 <div className="mt-5 space-y-4 text-sm">
                   <a
@@ -79,7 +79,7 @@ export default async function ContactPage() {
               {socialLinks.length > 0 && (
                 <div className="rounded-2xl border border-border bg-surface p-6 shadow-[var(--shadow-card)] md:p-7">
                   <h2 className="font-heading text-lg font-semibold tracking-tight text-primary">
-                    Mạng xã hội
+                    <T k="contact.social" />
                   </h2>
                   <div className="mt-5 space-y-1.5">
                     {socialLinks.map((link) => (
@@ -105,7 +105,7 @@ export default async function ContactPage() {
                   className="flex items-center justify-center gap-2 rounded-2xl border border-accent/25 bg-accent/[0.06] p-5 font-medium text-accent transition-colors duration-200 hover:border-accent/50 hover:bg-accent/10"
                 >
                   <Download className="h-5 w-5" aria-hidden />
-                  Tải CV của tôi
+                  <T k="common.downloadCv" />
                 </a>
               )}
             </div>

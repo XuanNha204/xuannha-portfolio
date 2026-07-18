@@ -41,7 +41,8 @@ export async function getProfile(): Promise<ProfileDTO> {
 export async function getSkills(onlyVisible = true): Promise<SkillDTO[]> {
   try {
     await dbConnect();
-    const filter = onlyVisible ? { visible: true } : {};
+    // $ne:false thay vì true để không bỏ sót document cũ thiếu field `visible`.
+    const filter = onlyVisible ? { visible: { $ne: false } } : {};
     return serialize<SkillDTO[]>(await Skill.find(filter).sort({ order: 1, name: 1 }).lean());
   } catch {
     return [];
@@ -84,7 +85,7 @@ export async function getCertificates(): Promise<CertificateDTO[]> {
 export async function getSocialLinks(onlyVisible = true): Promise<SocialLinkDTO[]> {
   try {
     await dbConnect();
-    const filter = onlyVisible ? { visible: true } : {};
+    const filter = onlyVisible ? { visible: { $ne: false } } : {};
     return serialize<SocialLinkDTO[]>(await SocialLink.find(filter).sort({ order: 1 }).lean());
   } catch {
     return [];

@@ -3,6 +3,7 @@ import { dbConnect } from "@/lib/db";
 import { BlogPost } from "@/models";
 import { blogPostSchema } from "@/schemas";
 import { requireOwner, jsonError, parseBody } from "@/lib/api-helpers";
+import { revalidateSite } from "@/lib/crud-factory";
 import { readingTime, slugify } from "@/lib/utils";
 
 type Ctx = { params: Promise<{ id: string }> };
@@ -56,6 +57,7 @@ export async function PUT(req: Request, ctx: Ctx) {
       { returnDocument: "after" }
     ).lean();
 
+    revalidateSite();
     return NextResponse.json(updated);
   } catch (err) {
     return jsonError(err instanceof Error ? err.message : "Lỗi máy chủ", 500);
@@ -70,6 +72,7 @@ export async function DELETE(_req: Request, ctx: Ctx) {
     const { id } = await ctx.params;
     const deleted = await BlogPost.findByIdAndDelete(id).lean();
     if (!deleted) return jsonError("Không tìm thấy", 404);
+    revalidateSite();
     return NextResponse.json({ success: true });
   } catch {
     return jsonError("Lỗi máy chủ", 500);

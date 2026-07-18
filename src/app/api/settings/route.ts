@@ -3,6 +3,7 @@ import { dbConnect } from "@/lib/db";
 import { SiteSettings } from "@/models";
 import { siteSettingsSchema } from "@/schemas";
 import { requireOwner, jsonError, parseBody } from "@/lib/api-helpers";
+import { revalidateSite } from "@/lib/crud-factory";
 
 export async function GET() {
   try {
@@ -28,6 +29,7 @@ export async function PUT(req: Request) {
       returnDocument: "after",
       upsert: true,
     }).lean();
+    revalidateSite();
     return NextResponse.json(updated);
   } catch {
     return jsonError("Lỗi máy chủ", 500);

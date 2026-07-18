@@ -5,6 +5,7 @@ import { ProjectSlider } from "@/features/projects/project-slider";
 import { ProjectCard } from "@/components/shared/project-card";
 import { EmptyState } from "@/components/shared/empty-state";
 import { Reveal, RevealGroup, RevealItem } from "@/components/motion/reveal";
+import { T } from "@/components/site/site-preferences";
 
 export const revalidate = 60;
 
@@ -26,20 +27,24 @@ export default async function ProjectsPage() {
             {"// projects"}
           </span>
           <h1 className="mt-4 font-heading text-4xl font-bold tracking-tight text-primary md:text-5xl">
-            Dự án của tôi
+            <T k="projects.title" />
           </h1>
           <p className="mt-5 text-pretty text-lg leading-relaxed text-muted">
-            {projects.length > 0
-              ? `${projects.length} dự án — kéo ngang hoặc dùng nút điều hướng để khám phá.`
-              : "Danh sách dự án sẽ sớm được cập nhật."}
+            {projects.length > 0 ? (
+              <>
+                {projects.length} <T k="projects.countSuffix" />
+              </>
+            ) : (
+              <T k="projects.emptyLead" />
+            )}
           </p>
         </Reveal>
 
         {projects.length === 0 ? (
           <EmptyState
             icon={<FolderGit2 className="h-6 w-6" />}
-            title="Chưa có dự án nào được công bố"
-            description="Quay lại sau nhé — các dự án đang được hoàn thiện."
+            title={<T k="projects.emptyTitle" />}
+            description={<T k="projects.emptyDesc" />}
           />
         ) : (
           <>
@@ -50,7 +55,7 @@ export default async function ProjectsPage() {
             {featured.length > 0 && rest.length > 0 && (
               <div className="mt-20">
                 <h2 className="mb-8 font-heading text-2xl font-bold text-primary">
-                  Tất cả dự án
+                  <T k="projects.all" />
                 </h2>
                 <RevealGroup className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                   {rest.map((project) => (

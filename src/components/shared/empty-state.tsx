@@ -2,8 +2,8 @@ import { Inbox } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface EmptyStateProps {
-  title: string;
-  description?: string;
+  title: React.ReactNode;
+  description?: React.ReactNode;
   icon?: React.ReactNode;
   className?: string;
   children?: React.ReactNode;

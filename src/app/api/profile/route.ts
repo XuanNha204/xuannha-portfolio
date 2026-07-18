@@ -3,6 +3,7 @@ import { dbConnect } from "@/lib/db";
 import { User } from "@/models";
 import { profileSchema } from "@/schemas";
 import { requireOwner, jsonError, parseBody } from "@/lib/api-helpers";
+import { revalidateSite } from "@/lib/crud-factory";
 
 export async function GET() {
   const { error } = await requireOwner();
@@ -31,6 +32,7 @@ export async function PUT(req: Request) {
       returnDocument: "after",
     }).lean();
     if (!updated) return jsonError("Không tìm thấy hồ sơ", 404);
+    revalidateSite();
     return NextResponse.json(updated);
   } catch {
     return jsonError("Lỗi máy chủ", 500);

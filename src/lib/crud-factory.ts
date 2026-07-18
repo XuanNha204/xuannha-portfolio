@@ -1,9 +1,18 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import type { Model } from "mongoose";
 import type { ZodSchema } from "zod";
 import { dbConnect } from "@/lib/db";
 import { jsonError, parseBody, requireOwner } from "@/lib/api-helpers";
 import { slugify } from "@/lib/utils";
+
+/**
+ * Trang public dùng ISR nên dữ liệu chỉ tự làm mới theo chu kỳ `revalidate`.
+ * Gọi hàm này sau mỗi mutation từ CMS để số liệu/nội dung cập nhật ngay.
+ */
+export function revalidateSite() {
+  revalidatePath("/", "layout");
+}
 
 interface CrudOptions<T> {
   model: Model<T>;
@@ -78,6 +87,7 @@ export function createCollectionHandlers<T>(options: CrudOptions<T>) {
       let payload = castDates({ ...(data as Record<string, unknown>) }, dateFields);
       if (slugFrom) payload = await withSlug(model, payload, slugFrom);
       const created = await model.create(payload as never);
+      revalidateSite();
       return NextResponse.json(created, { status: 201 });
     } catch (err) {
       const message = err instanceof Error ? err.message : "Lỗi máy chủ";
@@ -122,6 +132,7 @@ export function createItemHandlers<T>(options: CrudOptions<T>) {
       if (slugFrom) payload = await withSlug(model, payload, slugFrom, id);
       const updated = await model.findByIdAndUpdate(id, payload, { returnDocument: "after" }).lean();
       if (!updated) return jsonError("Không tìm thấy", 404);
+      revalidateSite();
       return NextResponse.json(updated);
     } catch (err) {
       const message = err instanceof Error ? err.message : "Lỗi máy chủ";
@@ -137,6 +148,7 @@ export function createItemHandlers<T>(options: CrudOptions<T>) {
       const { id } = await ctx.params;
       const deleted = await model.findByIdAndDelete(id).lean();
       if (!deleted) return jsonError("Không tìm thấy", 404);
+      revalidateSite();
       return NextResponse.json({ success: true });
     } catch {
       return jsonError("Lỗi máy chủ", 500);

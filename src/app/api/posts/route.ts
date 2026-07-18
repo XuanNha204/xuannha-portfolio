@@ -3,6 +3,7 @@ import { dbConnect } from "@/lib/db";
 import { BlogPost } from "@/models";
 import { blogPostSchema } from "@/schemas";
 import { requireOwner, jsonError, parseBody } from "@/lib/api-helpers";
+import { revalidateSite } from "@/lib/crud-factory";
 import { readingTime, slugify } from "@/lib/utils";
 import { getAdminPosts } from "@/services/blog.service";
 
@@ -46,6 +47,7 @@ export async function POST(req: Request) {
       scheduledAt: data.scheduledAt ? new Date(data.scheduledAt) : undefined,
       publishedAt: data.status === "published" ? new Date() : undefined,
     });
+    revalidateSite();
     return NextResponse.json(created, { status: 201 });
   } catch (err) {
     return jsonError(err instanceof Error ? err.message : "Lỗi máy chủ", 500);

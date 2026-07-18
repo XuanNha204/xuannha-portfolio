@@ -100,6 +100,11 @@ async function buildSystemPrompt(): Promise<string> {
     .join("\n");
 }
 
+// Quá hạn chưa nhận được header từ provider → hủy để failover sang provider kế tiếp.
+const CONNECT_TIMEOUT_MS = 15_000;
+// Stream đã mở nhưng im lặng quá lâu → đóng luồng thay vì để client chờ vô hạn.
+const STREAM_IDLE_TIMEOUT_MS = 30_000;
+
 /** Chuyển SSE (OpenAI-compatible) của provider thành luồng text thuần cho client. */
 function sseToTextStream(body: ReadableStream<Uint8Array>): ReadableStream<Uint8Array> {
   const encoder = new TextEncoder();
@@ -109,9 +114,22 @@ function sseToTextStream(body: ReadableStream<Uint8Array>): ReadableStream<Uint8
   return new ReadableStream<Uint8Array>({
     async start(controller) {
       let buffer = "";
+      let idleTimer: ReturnType<typeof setTimeout> | undefined;
       try {
         while (true) {
-          const { done, value } = await reader.read();
+          const nextChunk = reader.read();
+          // Nuốt rejection muộn của read() nếu vòng lặp đã thoát vì idle timeout.
+          nextChunk.catch(() => {});
+          const { done, value } = await Promise.race([
+            nextChunk,
+            new Promise<never>((_, reject) => {
+              idleTimer = setTimeout(
+                () => reject(new Error("stream_idle_timeout")),
+                STREAM_IDLE_TIMEOUT_MS
+              );
+            }),
+          ]);
+          clearTimeout(idleTimer);
           if (done) break;
           buffer += decoder.decode(value, { stream: true });
 
@@ -133,8 +151,10 @@ function sseToTextStream(body: ReadableStream<Uint8Array>): ReadableStream<Uint8
           }
         }
       } catch {
-        // Ngắt luồng: kết thúc êm để client giữ phần đã nhận.
+        // Ngắt luồng (lỗi mạng hoặc idle timeout): kết thúc êm để client giữ phần đã nhận.
+        reader.cancel().catch(() => {});
       } finally {
+        clearTimeout(idleTimer);
         controller.close();
         reader.releaseLock();
       }
@@ -172,9 +192,11 @@ export async function POST(req: NextRequest) {
     ...parsed.data.messages,
   ];
 
-  // Thử lần lượt từng provider; lỗi thì tự chuyển sang provider kế tiếp.
+  // Thử lần lượt từng provider; lỗi hoặc quá hạn kết nối thì tự chuyển sang provider kế tiếp.
   for (const provider of providers) {
     let upstream: Response;
+    const abort = new AbortController();
+    const connectTimer = setTimeout(() => abort.abort(), CONNECT_TIMEOUT_MS);
     try {
       upstream = await fetch(`${provider.baseUrl}/chat/completions`, {
         method: "POST",
@@ -188,10 +210,14 @@ export async function POST(req: NextRequest) {
           temperature: 0.7,
           messages,
         }),
+        signal: abort.signal,
       });
     } catch (err) {
-      console.warn(`[chat] provider "${provider.id}" lỗi kết nối, thử cái kế tiếp.`, err);
+      console.warn(`[chat] provider "${provider.id}" lỗi kết nối/timeout, thử cái kế tiếp.`, err);
       continue;
+    } finally {
+      // Chỉ canh giai đoạn chờ header; stream đang chạy thì không được hủy.
+      clearTimeout(connectTimer);
     }
 
     if (!upstream.ok || !upstream.body) {

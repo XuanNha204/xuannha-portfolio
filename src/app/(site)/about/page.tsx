@@ -22,6 +22,7 @@ import { SectionHeading } from "@/components/shared/section-heading";
 import { SkillsSection } from "@/features/home/skills-section";
 import { Reveal, RevealGroup, RevealItem } from "@/components/motion/reveal";
 import { Badge } from "@/components/ui/badge";
+import { T } from "@/components/site/site-preferences";
 import { formatDate } from "@/lib/utils";
 
 export const revalidate = 60;
@@ -40,7 +41,7 @@ function TimelineItem({
 }: {
   title: string;
   subtitle: string;
-  period: string;
+  period: React.ReactNode;
   description?: string;
   extra?: React.ReactNode;
 }) {
@@ -122,7 +123,7 @@ export default async function AboutPage() {
                 </a>
               </div>
               <p className="mt-6 max-w-2xl whitespace-pre-line leading-relaxed text-secondary">
-                {profile.about || "Thông tin giới thiệu sẽ được cập nhật qua CMS."}
+                {profile.about || <T k="about.introFallback" />}
               </p>
               {profile.resumeUrl && (
                 <a
@@ -130,7 +131,7 @@ export default async function AboutPage() {
                   download="xuan-nha-cv.pdf"
                   className="mt-8 inline-flex h-11 items-center gap-2 rounded-full bg-inverse px-6 text-sm font-medium text-inverse-fg transition-colors duration-200 hover:bg-inverse-hover"
                 >
-                  <Download className="h-4 w-4" aria-hidden /> Tải CV của tôi
+                  <Download className="h-4 w-4" aria-hidden /> <T k="common.downloadCv" />
                 </a>
               )}
             </Reveal>
@@ -149,7 +150,7 @@ export default async function AboutPage() {
                 </span>
                 <div>
                   <h2 className="font-heading text-xl font-semibold text-primary">
-                    Mục tiêu nghề nghiệp
+                    <T k="about.goalTitle" />
                   </h2>
                   <p className="mt-2 whitespace-pre-line leading-relaxed text-secondary">
                     {profile.careerGoal}
@@ -170,11 +171,13 @@ export default async function AboutPage() {
                 <Briefcase className="h-5 w-5" aria-hidden />
               </span>
               <h2 className="font-heading text-2xl font-bold tracking-tight text-primary">
-                Kinh nghiệm
+                <T k="about.experience" />
               </h2>
             </Reveal>
             {experiences.length === 0 ? (
-              <p className="text-sm text-muted">Chưa có dữ liệu kinh nghiệm.</p>
+              <p className="text-sm text-muted">
+                <T k="about.emptyExperience" />
+              </p>
             ) : (
               <RevealGroup className="space-y-10">
                 {experiences.map((exp) => (
@@ -182,7 +185,12 @@ export default async function AboutPage() {
                     key={exp._id}
                     title={exp.position}
                     subtitle={`${exp.company}${exp.location ? ` · ${exp.location}` : ""}`}
-                    period={`${formatDate(exp.startDate)} — ${exp.current ? "Hiện tại" : formatDate(exp.endDate)}`}
+                    period={
+                      <>
+                        {formatDate(exp.startDate)} —{" "}
+                        {exp.current ? <T k="about.present" /> : formatDate(exp.endDate)}
+                      </>
+                    }
                     description={exp.description}
                     extra={
                       exp.technologies.length > 0 ? (
@@ -205,11 +213,13 @@ export default async function AboutPage() {
                 <GraduationCap className="h-5 w-5" aria-hidden />
               </span>
               <h2 className="font-heading text-2xl font-bold tracking-tight text-primary">
-                Học vấn
+                <T k="about.education" />
               </h2>
             </Reveal>
             {educations.length === 0 ? (
-              <p className="text-sm text-muted">Chưa có dữ liệu học vấn.</p>
+              <p className="text-sm text-muted">
+                <T k="about.emptyEducation" />
+              </p>
             ) : (
               <RevealGroup className="space-y-10">
                 {educations.map((edu) => (
@@ -217,7 +227,12 @@ export default async function AboutPage() {
                     key={edu._id}
                     title={edu.school}
                     subtitle={`${edu.degree}${edu.field ? ` · ${edu.field}` : ""}`}
-                    period={`${formatDate(edu.startDate)} — ${edu.current ? "Hiện tại" : formatDate(edu.endDate)}`}
+                    period={
+                      <>
+                        {formatDate(edu.startDate)} —{" "}
+                        {edu.current ? <T k="about.present" /> : formatDate(edu.endDate)}
+                      </>
+                    }
                     description={[edu.description, edu.gpa ? `GPA: ${edu.gpa}` : ""]
                       .filter(Boolean)
                       .join("\n")}
@@ -240,8 +255,8 @@ export default async function AboutPage() {
           <div className="container-page">
             <SectionHeading
               eyebrow="// certificates"
-              title="Chứng chỉ"
-              description="Các chứng chỉ và khóa học tôi đã hoàn thành."
+              title={<T k="about.certificates" />}
+              description={<T k="about.certificatesDesc" />}
             />
             <RevealGroup className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {certificates.map((cert) => (
@@ -264,7 +279,7 @@ export default async function AboutPage() {
                         rel="noopener noreferrer"
                         className="mt-auto inline-flex items-center gap-1 pt-4 text-sm font-medium text-accent hover:underline"
                       >
-                        Xem chứng chỉ <ExternalLink className="h-3.5 w-3.5" />
+                        <T k="about.viewCertificate" /> <ExternalLink className="h-3.5 w-3.5" />
                       </a>
                     )}
                   </div>

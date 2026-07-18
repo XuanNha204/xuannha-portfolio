@@ -257,12 +257,13 @@ export function ChatWidget() {
       };
     });
 
-    // Timeout 60s: chỉ hủy nếu chưa nhận được byte nào (stream đã chạy thì để chạy tiếp).
+    // Timeout 120s: chỉ hủy nếu chưa nhận được byte nào (stream đã chạy thì để chạy tiếp).
+    // Ngưỡng rộng vì server có thể phải failover qua nhiều provider/model trước khi trả lời.
     const controller = new AbortController();
     let gotFirstChunk = false;
     const timeoutTimer = window.setTimeout(() => {
       if (!gotFirstChunk) controller.abort();
-    }, 60_000);
+    }, 120_000);
 
     try {
       const res = await fetch("/api/chat", {
