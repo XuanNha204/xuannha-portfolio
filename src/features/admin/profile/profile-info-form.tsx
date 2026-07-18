@@ -135,12 +135,15 @@ export function ProfileInfoForm() {
           <CardHeader>
             <CardTitle className="text-base">Avatar</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-3">
             <AvatarUpload
               value={avatar}
               onChange={(dataUrl) => setValue("avatar", dataUrl, { shouldDirty: true })}
               className="mx-auto max-w-64"
             />
+            <p className="text-center text-xs text-muted">
+              Ảnh vuông, tối đa 2MB. Thay đổi có hiệu lực sau khi bấm “Lưu hồ sơ”.
+            </p>
           </CardContent>
         </Card>
 
