@@ -416,9 +416,9 @@ Ngày 07/07/2026 (tiếp theo), thêm chatbot AI thông minh với failover tự
 
 **Cấu hình mặc định** ([.env.local](.env.local) + [.env.example](.env.example)):
 ```
-LLAMA_MODEL=meta/llama-4-maverick-17b-128e-instruct,meta/llama-3.3-70b-instruct,meta/llama-3.1-8b-instruct
+LLAMA_MODEL=stepfun-ai/step-3.7-flash,nvidia/nemotron-3-super-120b-a12b,meta/llama-3.2-11b-vision-instruct
 ```
-Thứ tự: maverick (vision) → 3.3-70b → 3.1-8b, cùng NVIDIA key.
+Thứ tự: Step 3.7 Flash (vision) → Nemotron 3 Super → Llama 3.2 11B Vision, cùng NVIDIA key.
 
 **Kiểm thử:** model đầu hỏng → tự sang model 2 cùng key ✅
 
