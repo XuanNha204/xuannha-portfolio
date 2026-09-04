@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { dbConnect } from "@/lib/db";
-import { Media } from "@/models";
+import { Media } from "@/models/Media";
 import { requireOwner, jsonError } from "@/lib/api-helpers";
 
 const MAX_SIZE = 8 * 1024 * 1024; // Keep base64 documents below MongoDB's 16MB limit.
@@ -32,12 +32,14 @@ export async function GET(req: NextRequest) {
     const filter: Record<string, unknown> = {};
     if (type && type !== "all") filter.type = type;
 
-    const total = await Media.countDocuments(filter);
-    const items = await Media.find(filter)
-      .sort({ createdAt: -1 })
-      .skip((page - 1) * limit)
-      .limit(limit)
-      .lean();
+    const [total, items] = await Promise.all([
+      Media.countDocuments(filter),
+      Media.find(filter)
+        .sort({ createdAt: -1 })
+        .skip((page - 1) * limit)
+        .limit(limit)
+        .lean(),
+    ]);
 
     return NextResponse.json({
       items,

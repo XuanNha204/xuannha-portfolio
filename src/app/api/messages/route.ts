@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { dbConnect } from "@/lib/db";
-import { Message } from "@/models";
+import { Message } from "@/models/Message";
 import { requireOwner, jsonError } from "@/lib/api-helpers";
 
 export async function GET(req: NextRequest) {
@@ -21,12 +21,14 @@ export async function GET(req: NextRequest) {
           ? { archived: true }
           : { archived: false };
 
-    const total = await Message.countDocuments(filter);
-    const items = await Message.find(filter)
-      .sort({ createdAt: -1 })
-      .skip((page - 1) * limit)
-      .limit(limit)
-      .lean();
+    const [total, items] = await Promise.all([
+      Message.countDocuments(filter),
+      Message.find(filter)
+        .sort({ createdAt: -1 })
+        .skip((page - 1) * limit)
+        .limit(limit)
+        .lean(),
+    ]);
 
     return NextResponse.json({
       items,

@@ -36,7 +36,6 @@ export default function AdminLoginPage() {
     } else {
       toast.success("Đăng nhập thành công");
       router.push("/admin");
-      router.refresh();
     }
   }
 

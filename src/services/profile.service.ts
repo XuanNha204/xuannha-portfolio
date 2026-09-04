@@ -1,12 +1,11 @@
+import { cache } from "react";
 import { dbConnect } from "@/lib/db";
-import {
-  User,
-  Skill,
-  Experience,
-  Education,
-  Certificate,
-  SocialLink,
-} from "@/models";
+import { User } from "@/models/User";
+import { Skill } from "@/models/Skill";
+import { Experience } from "@/models/Experience";
+import { Education } from "@/models/Education";
+import { Certificate } from "@/models/Certificate";
+import { SocialLink } from "@/models/SocialLink";
 import { serialize } from "./serialize";
 import type {
   ProfileDTO,
@@ -28,17 +27,32 @@ const FALLBACK_PROFILE: ProfileDTO = {
   careerGoal: "",
 };
 
-export async function getProfile(): Promise<ProfileDTO> {
+function publicAssetUrl(
+  value: string | undefined,
+  asset: "avatar" | "resume",
+  updatedAt: Date
+) {
+  if (!value?.startsWith("data:")) return value;
+  return `/api/profile/${asset}?v=${updatedAt.getTime().toString(36)}`;
+}
+
+export const getProfile = cache(async (): Promise<ProfileDTO> => {
   try {
     await dbConnect();
     const owner = await User.findOne({ role: "owner" }).lean();
-    return owner ? serialize<ProfileDTO>(owner) : FALLBACK_PROFILE;
+    if (!owner) return FALLBACK_PROFILE;
+
+    return serialize<ProfileDTO>({
+      ...owner,
+      avatar: publicAssetUrl(owner.avatar, "avatar", owner.updatedAt),
+      resumeUrl: publicAssetUrl(owner.resumeUrl, "resume", owner.updatedAt),
+    });
   } catch {
     return FALLBACK_PROFILE;
   }
-}
+});
 
-export async function getSkills(onlyVisible = true): Promise<SkillDTO[]> {
+export const getSkills = cache(async (onlyVisible = true): Promise<SkillDTO[]> => {
   try {
     await dbConnect();
     // $ne:false thay vì true để không bỏ sót document cũ thiếu field `visible`.
@@ -47,9 +61,9 @@ export async function getSkills(onlyVisible = true): Promise<SkillDTO[]> {
   } catch {
     return [];
   }
-}
+});
 
-export async function getExperiences(): Promise<ExperienceDTO[]> {
+export const getExperiences = cache(async (): Promise<ExperienceDTO[]> => {
   try {
     await dbConnect();
     return serialize<ExperienceDTO[]>(
@@ -58,9 +72,9 @@ export async function getExperiences(): Promise<ExperienceDTO[]> {
   } catch {
     return [];
   }
-}
+});
 
-export async function getEducations(): Promise<EducationDTO[]> {
+export const getEducations = cache(async (): Promise<EducationDTO[]> => {
   try {
     await dbConnect();
     return serialize<EducationDTO[]>(
@@ -69,9 +83,9 @@ export async function getEducations(): Promise<EducationDTO[]> {
   } catch {
     return [];
   }
-}
+});
 
-export async function getCertificates(): Promise<CertificateDTO[]> {
+export const getCertificates = cache(async (): Promise<CertificateDTO[]> => {
   try {
     await dbConnect();
     return serialize<CertificateDTO[]>(
@@ -80,9 +94,9 @@ export async function getCertificates(): Promise<CertificateDTO[]> {
   } catch {
     return [];
   }
-}
+});
 
-export async function getSocialLinks(onlyVisible = true): Promise<SocialLinkDTO[]> {
+export const getSocialLinks = cache(async (onlyVisible = true): Promise<SocialLinkDTO[]> => {
   try {
     await dbConnect();
     const filter = onlyVisible ? { visible: { $ne: false } } : {};
@@ -90,4 +104,4 @@ export async function getSocialLinks(onlyVisible = true): Promise<SocialLinkDTO[
   } catch {
     return [];
   }
-}
+});

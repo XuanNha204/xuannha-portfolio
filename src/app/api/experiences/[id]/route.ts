@@ -1,4 +1,4 @@
-import { Experience } from "@/models";
+import { Experience } from "@/models/Experience";
 import { experienceSchema } from "@/schemas";
 import { createItemHandlers } from "@/lib/crud-factory";
 

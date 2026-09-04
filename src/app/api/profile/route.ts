@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { dbConnect } from "@/lib/db";
-import { User } from "@/models";
+import { User } from "@/models/User";
 import { profileSchema } from "@/schemas";
 import { requireOwner, jsonError, parseBody } from "@/lib/api-helpers";
 import { revalidateSite } from "@/lib/crud-factory";

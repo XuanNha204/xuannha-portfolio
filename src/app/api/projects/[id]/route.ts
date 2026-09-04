@@ -1,4 +1,4 @@
-import { Project } from "@/models";
+import { Project } from "@/models/Project";
 import { projectSchema } from "@/schemas";
 import { createItemHandlers } from "@/lib/crud-factory";
 

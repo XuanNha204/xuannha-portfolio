@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { dbConnect } from "@/lib/db";
-import { Message } from "@/models";
+import { Message } from "@/models/Message";
 import { contactSchema } from "@/schemas";
 import { jsonError, parseBody } from "@/lib/api-helpers";
 import { rateLimit } from "@/lib/rate-limit";

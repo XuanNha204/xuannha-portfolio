@@ -98,7 +98,6 @@ export function ProjectForm({ project }: { project?: ProjectDTO }) {
         toast.success("Đã tạo dự án");
       }
       router.push("/admin/projects");
-      router.refresh();
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Lưu thất bại");
     }

@@ -1,4 +1,4 @@
-import { Category } from "@/models";
+import { Category } from "@/models/Category";
 import { categorySchema } from "@/schemas";
 import { createCollectionHandlers } from "@/lib/crud-factory";
 

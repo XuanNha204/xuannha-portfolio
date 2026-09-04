@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { dbConnect } from "@/lib/db";
-import { Message } from "@/models";
+import { Message } from "@/models/Message";
 import { requireOwner, jsonError } from "@/lib/api-helpers";
 
 type Ctx = { params: Promise<{ id: string }> };

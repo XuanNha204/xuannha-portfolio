@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { Project } from "@/models";
+import { Project } from "@/models/Project";
 import { projectSchema } from "@/schemas";
 import { createCollectionHandlers } from "@/lib/crud-factory";
 import { requireOwner, jsonError } from "@/lib/api-helpers";

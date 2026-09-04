@@ -44,15 +44,17 @@ export function MediaManager() {
   async function handleUpload(files: FileList) {
     setUploading(true);
     try {
-      for (const file of Array.from(files)) {
-        const formData = new FormData();
-        formData.append("file", file);
-        const res = await fetch("/api/media", { method: "POST", body: formData });
-        if (!res.ok) {
-          const body = await res.json().catch(() => null);
-          throw new Error(body?.error || `Upload "${file.name}" thất bại`);
-        }
-      }
+      await Promise.all(
+        Array.from(files).map(async (file) => {
+          const formData = new FormData();
+          formData.append("file", file);
+          const res = await fetch("/api/media", { method: "POST", body: formData });
+          if (!res.ok) {
+            const body = await res.json().catch(() => null);
+            throw new Error(body?.error || `Upload "${file.name}" thất bại`);
+          }
+        })
+      );
       toast.success("Đã tải lên thành công");
       queryClient.invalidateQueries({ queryKey: ["media"] });
     } catch (err) {

@@ -1,23 +1,31 @@
+import { cache } from "react";
 import { dbConnect } from "@/lib/db";
-import { Project } from "@/models";
+import { Project } from "@/models/Project";
 import { serialize } from "./serialize";
 import type { Paginated, ProjectDTO } from "@/types";
 
-export async function getPublishedProjects(limit?: number): Promise<ProjectDTO[]> {
+// Public cards/chat do not need long descriptions or base64-backed galleries.
+const PROJECT_LIST_FIELDS =
+  "title slug summary coverImage githubUrl techStack featured status completedAt order views createdAt updatedAt";
+
+export const getPublishedProjects = cache(async (limit?: number): Promise<ProjectDTO[]> => {
   try {
     await dbConnect();
-    const query = Project.find({ status: "published" }).sort({ order: 1, completedAt: -1 });
+    const query = Project.find({ status: "published" })
+      .select(PROJECT_LIST_FIELDS)
+      .sort({ order: 1, completedAt: -1 });
     if (limit) query.limit(limit);
     return serialize<ProjectDTO[]>(await query.lean());
   } catch {
     return [];
   }
-}
+});
 
-export async function getFeaturedProjects(limit = 6): Promise<ProjectDTO[]> {
+export const getFeaturedProjects = cache(async (limit = 6): Promise<ProjectDTO[]> => {
   try {
     await dbConnect();
     const projects = await Project.find({ status: "published", featured: true })
+      .select(PROJECT_LIST_FIELDS)
       .sort({ order: 1, completedAt: -1 })
       .limit(limit)
       .lean();
@@ -25,9 +33,9 @@ export async function getFeaturedProjects(limit = 6): Promise<ProjectDTO[]> {
   } catch {
     return [];
   }
-}
+});
 
-export async function getProjectBySlug(slug: string): Promise<ProjectDTO | null> {
+export const getProjectBySlug = cache(async (slug: string): Promise<ProjectDTO | null> => {
   try {
     await dbConnect();
     const project = await Project.findOneAndUpdate(
@@ -39,9 +47,9 @@ export async function getProjectBySlug(slug: string): Promise<ProjectDTO | null>
   } catch {
     return null;
   }
-}
+});
 
-export async function getProjectSlugs(): Promise<string[]> {
+export const getProjectSlugs = cache(async (): Promise<string[]> => {
   try {
     await dbConnect();
     const docs = await Project.find({ status: "published" }).select("slug").lean();
@@ -49,7 +57,7 @@ export async function getProjectSlugs(): Promise<string[]> {
   } catch {
     return [];
   }
-}
+});
 
 export async function getAdminProjects(params: {
   page?: number;
@@ -72,12 +80,14 @@ export async function getAdminProjects(params: {
     ];
   }
 
-  const total = await Project.countDocuments(filter);
-  const items = await Project.find(filter)
-    .sort({ updatedAt: -1 })
-    .skip((page - 1) * limit)
-    .limit(limit)
-    .lean();
+  const [total, items] = await Promise.all([
+    Project.countDocuments(filter),
+    Project.find(filter)
+      .sort({ updatedAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .lean(),
+  ]);
 
   return {
     items: serialize<ProjectDTO[]>(items),

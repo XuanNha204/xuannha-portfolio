@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
 import { NextResponse } from "next/server";
 import { dbConnect } from "@/lib/db";
-import { User } from "@/models";
+import { User } from "@/models/User";
 import { changePasswordSchema } from "@/schemas";
 import { requireOwner, jsonError, parseBody } from "@/lib/api-helpers";
 

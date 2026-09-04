@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import Link from "next/link";
+import { lazy, Suspense, useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
 import {
@@ -15,10 +14,11 @@ import {
   Volume2,
   X,
 } from "lucide-react";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
 import { useSitePreferences } from "@/components/site/site-preferences";
 import { cn } from "@/lib/utils";
+
+const loadChatMessageMarkdown = () => import("./chat-message-markdown");
+const ChatMessageMarkdown = lazy(loadChatMessageMarkdown);
 
 type ChatMessage = { role: "user" | "assistant"; content: string; image?: string };
 
@@ -109,10 +109,15 @@ export function ChatWidget() {
   const stickToBottomRef = useRef(true);
 
   const speechLang = language === "zh" ? "zh-CN" : language === "en" ? "en-US" : "vi-VN";
+  const closeChat = useCallback(() => setOpen(false), []);
 
   useEffect(() => {
     setVoiceSupported(!!getSpeechRecognition());
   }, []);
+
+  useEffect(() => {
+    if (open) void loadChatMessageMarkdown();
+  }, [open]);
 
   function handleMessagesScroll() {
     const el = scrollRef.current;
@@ -277,6 +282,18 @@ export function ChatWidget() {
     const timeoutTimer = window.setTimeout(() => {
       if (!gotFirstChunk) controller.abort();
     }, 90_000);
+    let streamFrame: number | null = null;
+    let accumulated = "";
+
+    const commitStream = () => {
+      streamFrame = null;
+      const content = accumulated;
+      setMessages((prev) => {
+        const next = [...prev];
+        next[next.length - 1] = { role: "assistant", content };
+        return next;
+      });
+    };
 
     try {
       const res = await fetch("/api/chat", {
@@ -291,19 +308,20 @@ export function ChatWidget() {
 
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
-      let acc = "";
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
         gotFirstChunk = true;
-        acc += decoder.decode(value, { stream: true });
-        setMessages((prev) => {
-          const next = [...prev];
-          next[next.length - 1] = { role: "assistant", content: acc };
-          return next;
-        });
+        accumulated += decoder.decode(value, { stream: true });
+        if (streamFrame === null) {
+          streamFrame = window.requestAnimationFrame(commitStream);
+        }
       }
-      if (!acc.trim()) {
+      accumulated += decoder.decode();
+      if (streamFrame !== null) window.cancelAnimationFrame(streamFrame);
+      commitStream();
+
+      if (!accumulated.trim()) {
         setMessages((prev) => {
           const next = [...prev];
           next[next.length - 1] = { role: "assistant", content: t("chat.error") };
@@ -325,6 +343,7 @@ export function ChatWidget() {
       });
     } finally {
       window.clearTimeout(timeoutTimer);
+      if (streamFrame !== null) window.cancelAnimationFrame(streamFrame);
       setLoading(false);
     }
   }
@@ -470,57 +489,14 @@ export function ChatWidget() {
 
                     {msg.role === "assistant" ? (
                       msg.content ? (
-                        <div className="prose-chat">
-                          <ReactMarkdown
-                            remarkPlugins={[remarkGfm]}
-                            components={{
-                              a({ href, children }) {
-                                const url = href ?? "#";
-                                if (url.startsWith("/")) {
-                                  return (
-                                    <Link
-                                      href={url}
-                                      onClick={() => setOpen(false)}
-                                      className="font-medium text-accent underline underline-offset-2"
-                                    >
-                                      {children}
-                                    </Link>
-                                  );
-                                }
-                                return (
-                                  <a
-                                    href={url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="font-medium text-accent underline underline-offset-2"
-                                  >
-                                    {children}
-                                  </a>
-                                );
-                              },
-                              p({ children }) {
-                                return <p className="mb-2 last:mb-0">{children}</p>;
-                              },
-                              ul({ children }) {
-                                return <ul className="mb-2 list-disc space-y-1 pl-4">{children}</ul>;
-                              },
-                              ol({ children }) {
-                                return (
-                                  <ol className="mb-2 list-decimal space-y-1 pl-4">{children}</ol>
-                                );
-                              },
-                              code({ children }) {
-                                return (
-                                  <code className="rounded bg-border/60 px-1 py-0.5 text-xs">
-                                    {children}
-                                  </code>
-                                );
-                              },
-                            }}
-                          >
-                            {msg.content}
-                          </ReactMarkdown>
-                        </div>
+                        <Suspense
+                          fallback={<span className="whitespace-pre-wrap">{msg.content}</span>}
+                        >
+                          <ChatMessageMarkdown
+                            content={msg.content}
+                            onInternalNavigate={closeChat}
+                          />
+                        </Suspense>
                       ) : (
                         loading && typingIndicator
                       )

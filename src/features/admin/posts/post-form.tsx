@@ -113,7 +113,6 @@ export function PostForm({ post }: { post?: BlogPostDTO }) {
         toast.success("Đã tạo bài viết");
       }
       router.push("/admin/posts");
-      router.refresh();
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Lưu thất bại");
     }

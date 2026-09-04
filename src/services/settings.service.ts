@@ -1,5 +1,6 @@
+import { cache } from "react";
 import { dbConnect } from "@/lib/db";
-import { SiteSettings } from "@/models";
+import { SiteSettings } from "@/models/SiteSettings";
 import { serialize } from "./serialize";
 import type { SiteSettingsDTO } from "@/types";
 
@@ -16,7 +17,7 @@ const FALLBACK_SETTINGS: SiteSettingsDTO = {
   maintenanceMode: false,
 };
 
-export async function getSiteSettings(): Promise<SiteSettingsDTO> {
+export const getSiteSettings = cache(async (): Promise<SiteSettingsDTO> => {
   try {
     await dbConnect();
     let settings = await SiteSettings.findOne().lean();
@@ -27,4 +28,4 @@ export async function getSiteSettings(): Promise<SiteSettingsDTO> {
   } catch {
     return FALLBACK_SETTINGS;
   }
-}
+});

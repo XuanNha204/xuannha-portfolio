@@ -1,8 +1,13 @@
 import { dbConnect } from "@/lib/db";
-import { Analytics, BlogPost, Message, Project } from "@/models";
+import { Analytics } from "@/models/Analytics";
+import { BlogPost } from "@/models/BlogPost";
+import { Message } from "@/models/Message";
+import { Project } from "@/models/Project";
+import { logPerformance } from "@/lib/performance";
 import type { DashboardStats } from "@/types";
 
 export async function getDashboardStats(): Promise<DashboardStats> {
+  const startedAt = performance.now();
   const empty: DashboardStats = {
     totalViews: 0,
     totalProjects: 0,
@@ -39,7 +44,7 @@ export async function getDashboardStats(): Promise<DashboardStats> {
         ]),
       ]);
 
-    return {
+    const result = {
       totalViews: viewsAgg[0]?.total ?? 0,
       totalProjects,
       totalPosts,
@@ -54,17 +59,15 @@ export async function getDashboardStats(): Promise<DashboardStats> {
         views: p.views,
       })),
     };
+    logPerformance("dashboard.stats", performance.now() - startedAt, { outcome: "ok" });
+    return result;
   } catch {
+    logPerformance(
+      "dashboard.stats",
+      performance.now() - startedAt,
+      { outcome: "error" },
+      true
+    );
     return empty;
-  }
-}
-
-export async function trackPageView(path: string) {
-  try {
-    await dbConnect();
-    const date = new Date().toISOString().slice(0, 10);
-    await Analytics.updateOne({ path, date }, { $inc: { views: 1 } }, { upsert: true });
-  } catch {
-    // analytics must never break the site
   }
 }

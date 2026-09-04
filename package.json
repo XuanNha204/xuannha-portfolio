@@ -7,7 +7,10 @@
     "build": "next build --turbopack",
     "start": "next start",
     "lint": "eslint",
-    "seed": "tsx scripts/seed.ts"
+    "seed": "tsx scripts/seed.ts",
+    "perf:profile": "node --import tsx scripts/performance-profile.ts",
+    "perf:routes": "node --import tsx scripts/benchmark-routes.ts",
+    "perf:indexes": "node --import tsx scripts/audit-mongodb-indexes.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.4.0",

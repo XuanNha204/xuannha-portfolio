@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { SmoothScroll } from "@/components/motion/smooth-scroll";
@@ -20,7 +21,9 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
         <main className="min-h-screen pt-16">
           <PageTransition>{children}</PageTransition>
         </main>
-        <Footer />
+        <Suspense fallback={null}>
+          <Footer />
+        </Suspense>
         <ChatWidget />
       </SmoothScroll>
     </SitePreferencesProvider>

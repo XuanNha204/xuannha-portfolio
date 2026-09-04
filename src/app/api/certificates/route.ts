@@ -1,4 +1,4 @@
-import { Certificate } from "@/models";
+import { Certificate } from "@/models/Certificate";
 import { certificateSchema } from "@/schemas";
 import { createCollectionHandlers } from "@/lib/crud-factory";
 

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { dbConnect } from "@/lib/db";
-import { SiteSettings } from "@/models";
+import { SiteSettings } from "@/models/SiteSettings";
 import { siteSettingsSchema } from "@/schemas";
 import { requireOwner, jsonError, parseBody } from "@/lib/api-helpers";
 import { revalidateSite } from "@/lib/crud-factory";

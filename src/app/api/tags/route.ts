@@ -1,4 +1,4 @@
-import { Tag } from "@/models";
+import { Tag } from "@/models/Tag";
 import { tagSchema } from "@/schemas";
 import { createCollectionHandlers } from "@/lib/crud-factory";
 

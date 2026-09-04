@@ -1,4 +1,4 @@
-import { Skill } from "@/models";
+import { Skill } from "@/models/Skill";
 import { skillSchema } from "@/schemas";
 import { createCollectionHandlers } from "@/lib/crud-factory";
 

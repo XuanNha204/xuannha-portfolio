@@ -1,4 +1,4 @@
-import { SocialLink } from "@/models";
+import { SocialLink } from "@/models/SocialLink";
 import { socialLinkSchema } from "@/schemas";
 import { createItemHandlers } from "@/lib/crud-factory";
 
