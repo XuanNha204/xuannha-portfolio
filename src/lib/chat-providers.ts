@@ -10,7 +10,7 @@
  *
  * MỖI biến *_MODEL có thể là DANH SÁCH model cách nhau bằng dấu phẩy — dùng
  * chung 1 key/base url. Model đầu quá tải/lỗi thì tự thử model kế tiếp.
- * Vd: LLAMA_MODEL="meta/llama-4-maverick-17b-128e-instruct,meta/llama-3.1-8b-instruct"
+ * Vd: LLAMA_MODEL="stepfun-ai/step-3.7-flash,nvidia/nemotron-3-super-120b-a12b"
  */
 
 export type ProviderId = "llama" | "openai" | "gemini" | "deepseek";
@@ -48,7 +48,7 @@ const DEFINITIONS: ProviderDefinition[] = [
     baseUrlEnv: "LLAMA_BASE_URL",
     baseUrlDefault: "https://integrate.api.nvidia.com/v1",
     modelEnv: "LLAMA_MODEL",
-    modelDefault: "meta/llama-4-maverick-17b-128e-instruct",
+    modelDefault: "stepfun-ai/step-3.7-flash",
   },
   {
     id: "openai",
