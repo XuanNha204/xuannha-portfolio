@@ -6,7 +6,7 @@ import { dbConnect } from "./db";
 import { User } from "@/models/User";
 import { loginSchema } from "@/schemas";
 
-export const { handlers, auth, signIn, signOut } = NextAuth({
+export const { handlers, auth } = NextAuth({
   ...authConfig,
   providers: [
     Credentials({

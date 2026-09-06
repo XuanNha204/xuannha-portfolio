@@ -28,22 +28,3 @@ export function logPerformance(
     `[performance] ${operation} ${durationMs.toFixed(1)}ms${metadata ? ` ${metadata}` : ""}`
   );
 }
-
-export async function measurePerformance<T>(
-  operation: string,
-  task: () => Promise<T>,
-  details: PerformanceDetails = {}
-): Promise<T> {
-  const startedAt = performance.now();
-  try {
-    return await task();
-  } finally {
-    logPerformance(operation, performance.now() - startedAt, details);
-  }
-}
-
-export function serverTiming(name: string, durationMs: number, description?: string) {
-  const safeName = name.replace(/[^a-zA-Z0-9_-]/g, "_");
-  const safeDescription = description?.replace(/["\\]/g, "");
-  return `${safeName};dur=${durationMs.toFixed(1)}${safeDescription ? `;desc="${safeDescription}"` : ""}`;
-}

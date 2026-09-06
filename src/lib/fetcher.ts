@@ -1,4 +1,4 @@
-export class ApiError extends Error {
+class ApiError extends Error {
   status: number;
   details?: unknown;
 
@@ -9,7 +9,7 @@ export class ApiError extends Error {
   }
 }
 
-export async function api<T>(url: string, options: RequestInit = {}): Promise<T> {
+async function api<T>(url: string, options: RequestInit = {}): Promise<T> {
   const res = await fetch(url, {
     headers: options.body instanceof FormData ? {} : { "Content-Type": "application/json" },
     ...options,
