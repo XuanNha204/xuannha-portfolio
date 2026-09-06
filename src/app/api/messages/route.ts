@@ -10,8 +10,8 @@ export async function GET(req: NextRequest) {
   try {
     await dbConnect();
     const sp = req.nextUrl.searchParams;
-    const page = Number(sp.get("page")) || 1;
-    const limit = Number(sp.get("limit")) || 20;
+    const page = Math.max(1, Math.min(10_000, Number(sp.get("page")) || 1));
+    const limit = Math.max(1, Math.min(100, Number(sp.get("limit")) || 20));
     const filterParam = sp.get("filter"); // all | unread | archived
 
     const filter: Record<string, unknown> =

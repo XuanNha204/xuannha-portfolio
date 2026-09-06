@@ -2,8 +2,8 @@ import { z } from "zod";
 import { siteContentSchema } from "@/lib/site-content";
 
 export const loginSchema = z.object({
-  email: z.string().email("Email không hợp lệ"),
-  password: z.string().min(6, "Mật khẩu tối thiểu 6 ký tự"),
+  email: z.string().email("Email không hợp lệ").max(254),
+  password: z.string().min(6, "Mật khẩu tối thiểu 6 ký tự").max(128),
 });
 
 export const contactSchema = z.object({
@@ -24,26 +24,29 @@ export const socialLinkSchema = z.object({
 export const profileSchema = z.object({
   name: z.string().min(1).max(100),
   headline: z.string().max(200).optional().or(z.literal("")),
-  about: z.string().optional().or(z.literal("")),
+  about: z.string().max(10_000).optional().or(z.literal("")),
   location: z.string().max(200).optional().or(z.literal("")),
   phone: z.string().max(30).optional().or(z.literal("")),
   avatar: z
     .string()
     .max(3_000_000, "Avatar tối đa 2MB")
-    .refine((value) => value === "" || /^\/media\/[a-zA-Z0-9._/-]+$/.test(value) || value.startsWith("data:image/") || /^https?:\/\//.test(value), {
+    .refine((value) => value === "" || /^\/media\/[a-zA-Z0-9._/-]+$/.test(value) || /^data:image\/(?:jpeg|png|gif|webp);base64,/i.test(value) || /^https:\/\//.test(value), {
       message: "Avatar phải là file ảnh",
     })
     .optional()
     .or(z.literal("")),
-  resumeUrl: z.string().optional().or(z.literal("")),
-  careerGoal: z.string().optional().or(z.literal("")),
+  resumeUrl: z.string().max(12_000_000).refine(
+    (value) => value === "" || /^data:application\/pdf;base64,/i.test(value) || /^https:\/\//.test(value) || /^\/media\/[a-zA-Z0-9._/-]+\.pdf$/i.test(value),
+    "CV phải là file PDF hoặc URL HTTPS"
+  ).optional().or(z.literal("")),
+  careerGoal: z.string().max(2_000).optional().or(z.literal("")),
 });
 
 export const changePasswordSchema = z
   .object({
-    currentPassword: z.string().min(1, "Nhập mật khẩu hiện tại"),
-    newPassword: z.string().min(8, "Mật khẩu mới tối thiểu 8 ký tự").max(128),
-    confirmPassword: z.string().min(1, "Xác nhận mật khẩu mới"),
+    currentPassword: z.string().min(1, "Nhập mật khẩu hiện tại").max(128),
+    newPassword: z.string().min(12, "Mật khẩu mới tối thiểu 12 ký tự").max(128),
+    confirmPassword: z.string().min(1, "Xác nhận mật khẩu mới").max(128),
   })
   .refine((data) => data.newPassword === data.confirmPassword, {
     message: "Mật khẩu xác nhận không khớp",

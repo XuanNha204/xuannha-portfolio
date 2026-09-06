@@ -1,6 +1,7 @@
 "use client";
 
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
+import { signOut } from "next-auth/react";
 import { toast } from "sonner";
 import { KeyRound, Save } from "lucide-react";
 import { apiPut } from "@/lib/fetcher";
@@ -20,7 +21,7 @@ export function ChangePasswordForm() {
     register,
     handleSubmit,
     reset,
-    watch,
+    control,
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({
     defaultValues: {
@@ -29,12 +30,15 @@ export function ChangePasswordForm() {
       confirmPassword: "",
     },
   });
+  const currentPassword = useWatch({ control, name: "currentPassword" });
+  const newPassword = useWatch({ control, name: "newPassword" });
 
   async function onSubmit(values: FormValues) {
     try {
       await apiPut("/api/profile/password", values);
       reset();
       toast.success("Đã đổi mật khẩu admin");
+      await signOut({ callbackUrl: "/admin/login" });
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Đổi mật khẩu thất bại");
     }
@@ -72,9 +76,9 @@ export function ChangePasswordForm() {
                 autoComplete="new-password"
                 {...register("newPassword", {
                   required: "Nhập mật khẩu mới",
-                  minLength: { value: 8, message: "Mật khẩu mới tối thiểu 8 ký tự" },
+                  minLength: { value: 12, message: "Mật khẩu mới tối thiểu 12 ký tự" },
                   validate: (value) =>
-                    value !== watch("currentPassword") || "Mật khẩu mới phải khác mật khẩu hiện tại",
+                    value !== currentPassword || "Mật khẩu mới phải khác mật khẩu hiện tại",
                 })}
               />
               {errors.newPassword && (
@@ -90,7 +94,7 @@ export function ChangePasswordForm() {
                 autoComplete="new-password"
                 {...register("confirmPassword", {
                   required: "Xác nhận mật khẩu mới",
-                  validate: (value) => value === watch("newPassword") || "Mật khẩu xác nhận không khớp",
+                  validate: (value) => value === newPassword || "Mật khẩu xác nhận không khớp",
                 })}
               />
               {errors.confirmPassword && (

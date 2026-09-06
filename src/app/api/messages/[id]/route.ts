@@ -1,18 +1,27 @@
 import { NextResponse } from "next/server";
 import { dbConnect } from "@/lib/db";
 import { Message } from "@/models/Message";
-import { requireOwner, jsonError } from "@/lib/api-helpers";
+import { requireOwner, jsonError, parseBody, validObjectId } from "@/lib/api-helpers";
+import { z } from "zod";
 
 type Ctx = { params: Promise<{ id: string }> };
+const messageUpdateSchema = z.object({
+  read: z.boolean().optional(),
+  archived: z.boolean().optional(),
+}).refine((value) => value.read !== undefined || value.archived !== undefined);
 
 export async function PATCH(req: Request, ctx: Ctx) {
-  const { error } = await requireOwner();
+  const { error } = await requireOwner(req);
   if (error) return error;
+
+  const parsed = await parseBody(req, messageUpdateSchema);
+  if (parsed.error) return parsed.error;
 
   try {
     await dbConnect();
     const { id } = await ctx.params;
-    const body = await req.json();
+    if (!validObjectId(id)) return jsonError("Mã không hợp lệ", 400);
+    const body = parsed.data;
 
     const update: Record<string, boolean> = {};
     if (typeof body.read === "boolean") update.read = body.read;
@@ -28,13 +37,14 @@ export async function PATCH(req: Request, ctx: Ctx) {
   }
 }
 
-export async function DELETE(_req: Request, ctx: Ctx) {
-  const { error } = await requireOwner();
+export async function DELETE(req: Request, ctx: Ctx) {
+  const { error } = await requireOwner(req);
   if (error) return error;
 
   try {
     await dbConnect();
     const { id } = await ctx.params;
+    if (!validObjectId(id)) return jsonError("Mã không hợp lệ", 400);
     const deleted = await Message.findByIdAndDelete(id).lean();
     if (!deleted) return jsonError("Không tìm thấy", 404);
     return NextResponse.json({ success: true });

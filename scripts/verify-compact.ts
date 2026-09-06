@@ -8,6 +8,9 @@ const mutate = process.argv.includes("--mutations");
 const cookies = new Map<string, string>();
 async function request(path: string, init: RequestInit = {}, authenticated = false) {
   const headers = new Headers(init.headers);
+  if (init.method && !["GET", "HEAD", "OPTIONS"].includes(init.method.toUpperCase()) && !headers.has("origin")) {
+    headers.set("origin", new URL(base).origin);
+  }
   if (authenticated) headers.set("cookie", [...cookies].map(([key, value]) => `${key}=${value}`).join("; "));
   const response = await fetch(base + path, { ...init, headers, redirect: "manual" });
   if (authenticated) for (const cookie of response.headers.getSetCookie()) {
@@ -23,6 +26,8 @@ async function main() {
   for (const path of ["/"]) {
     const response = await request(path);
     assert.equal(response.status, 200, path);
+    assert.ok(response.headers.get("content-security-policy")?.includes("object-src 'none'"), "Security policy header");
+    assert.equal(response.headers.get("x-frame-options"), "DENY", "Frame protection header");
     const body = await response.text();
     assert.ok(body.includes("<h1"), path + " heading");
     assert.ok(!body.includes('href="/blog"') && !body.includes('href="/projects"'), path + " retired links");
@@ -59,6 +64,13 @@ async function main() {
   const session = await (await request("/api/auth/session", {}, true)).json() as { user?: { role?: string } } | null;
   assert.equal(session?.user?.role, "owner", "Owner login: credentials do not match this database");
   assert.equal((await request("/admin", {}, true)).status, 200);
+  const crossOrigin = json("PUT", {});
+  crossOrigin.headers = { "Content-Type": "application/json", Origin: "https://attacker.invalid" };
+  assert.equal((await request("/api/settings", crossOrigin, true)).status, 403, "Cross-origin mutation blocked");
+  assert.equal((await request("/api/social-links/not-an-object-id", {}, true)).status, 400, "Invalid database id blocked");
+  const fakeUpload = new FormData();
+  fakeUpload.set("file", new File(["<svg><script>alert(1)</script></svg>"], "fake.png", { type: "image/png" }));
+  assert.equal((await request("/api/media", { method: "POST", body: fakeUpload }, true)).status, 415, "Forged media type blocked");
   const original = await (await request("/api/settings", {}, true)).json() as SiteSettingsDTO;
   const marker = "Kiểm tra nội dung " + Date.now();
   let socialId: string | undefined;
@@ -95,6 +107,17 @@ async function main() {
       assert.ok(!(await (await request("/")).text()).includes(marker), "Original homepage restored");
     }
     console.log("Cleanup complete: temporary content removed, original settings restored.");
+  }
+  if (process.env.SECURITY_FIXTURE === "1") {
+    const replacement = `${process.env.ADMIN_PASSWORD}-changed`;
+    const changed = await request("/api/profile/password", json("PUT", {
+      currentPassword: process.env.ADMIN_PASSWORD,
+      newPassword: replacement,
+      confirmPassword: replacement,
+    }), true);
+    assert.equal(changed.status, 200, "Password changed in isolated fixture");
+    assert.equal((await request("/api/settings", {}, true)).status, 401, "Old session revoked after password change");
+    console.log("PASS: password change revokes the previous admin session.");
   }
 }
 main().catch((error) => { console.error(error instanceof Error ? error.message : "Verification failed"); process.exitCode = 1; });

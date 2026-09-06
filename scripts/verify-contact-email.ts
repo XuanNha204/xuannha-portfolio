@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { mock } from "node:test";
-import nodemailer from "nodemailer";
+import nodemailer from "secure-mailer";
 import { contactMail, gmailConfig, sendContactNotification } from "../src/lib/contact-email";
 
 async function main() {

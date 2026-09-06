@@ -3,7 +3,7 @@ import { revalidatePath } from "next/cache";
 import type { Model } from "mongoose";
 import type { ZodSchema } from "zod";
 import { dbConnect } from "@/lib/db";
-import { jsonError, parseBody, requireOwner } from "@/lib/api-helpers";
+import { jsonError, parseBody, requireOwner, validObjectId } from "@/lib/api-helpers";
 
 /**
  * Trang public dùng ISR nên dữ liệu chỉ tự làm mới theo chu kỳ `revalidate`.
@@ -36,7 +36,7 @@ export function createCollectionHandlers<T>(options: CrudOptions<T>) {
   }
 
   async function POST(req: Request) {
-    const { error: authError } = await requireOwner();
+    const { error: authError } = await requireOwner(req);
     if (authError) return authError;
 
     const { data, error } = await parseBody(req, schema);
@@ -48,9 +48,8 @@ export function createCollectionHandlers<T>(options: CrudOptions<T>) {
       const created = await model.create(payload as never);
       revalidateSite();
       return NextResponse.json(created, { status: 201 });
-    } catch (err) {
-      const message = err instanceof Error ? err.message : "Lỗi máy chủ";
-      return jsonError(message, 500);
+    } catch {
+      return jsonError("Lỗi máy chủ", 500);
     }
   }
 
@@ -69,6 +68,7 @@ export function createItemHandlers<T>(options: CrudOptions<T>) {
     try {
       await dbConnect();
       const { id } = await ctx.params;
+      if (!validObjectId(id)) return jsonError("Mã không hợp lệ", 400);
       const item = await model.findById(id).lean();
       if (!item) return jsonError("Không tìm thấy", 404);
       return NextResponse.json(item);
@@ -78,7 +78,7 @@ export function createItemHandlers<T>(options: CrudOptions<T>) {
   }
 
   async function PUT(req: Request, ctx: Ctx) {
-    const { error: authError } = await requireOwner();
+    const { error: authError } = await requireOwner(req);
     if (authError) return authError;
 
     const { data, error } = await parseBody(req, schema);
@@ -87,23 +87,24 @@ export function createItemHandlers<T>(options: CrudOptions<T>) {
     try {
       await dbConnect();
       const { id } = await ctx.params;
+      if (!validObjectId(id)) return jsonError("Mã không hợp lệ", 400);
       const payload = data as Record<string, unknown>;
       const updated = await model.findByIdAndUpdate(id, payload, { returnDocument: "after" }).lean();
       if (!updated) return jsonError("Không tìm thấy", 404);
       revalidateSite();
       return NextResponse.json(updated);
-    } catch (err) {
-      const message = err instanceof Error ? err.message : "Lỗi máy chủ";
-      return jsonError(message, 500);
+    } catch {
+      return jsonError("Lỗi máy chủ", 500);
     }
   }
 
-  async function DELETE(_req: Request, ctx: Ctx) {
-    const { error } = await requireOwner();
+  async function DELETE(req: Request, ctx: Ctx) {
+    const { error } = await requireOwner(req);
     if (error) return error;
     try {
       await dbConnect();
       const { id } = await ctx.params;
+      if (!validObjectId(id)) return jsonError("Mã không hợp lệ", 400);
       const deleted = await model.findByIdAndDelete(id).lean();
       if (!deleted) return jsonError("Không tìm thấy", 404);
       revalidateSite();

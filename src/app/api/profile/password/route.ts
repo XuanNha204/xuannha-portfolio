@@ -6,7 +6,7 @@ import { changePasswordSchema } from "@/schemas";
 import { requireOwner, jsonError, parseBody } from "@/lib/api-helpers";
 
 export async function PUT(req: Request) {
-  const { error: authError } = await requireOwner();
+  const { session, error: authError } = await requireOwner(req);
   if (authError) return authError;
 
   const { data, error } = await parseBody(req, changePasswordSchema);
@@ -14,13 +14,15 @@ export async function PUT(req: Request) {
 
   try {
     await dbConnect();
-    const owner = await User.findOne({ role: "owner" }).select("+password");
+    const owner = await User.findOne({ _id: session.user.id, role: "owner" })
+      .select("+password +sessionVersion");
     if (!owner) return jsonError("Không tìm thấy tài khoản admin", 404);
 
     const valid = await bcrypt.compare(data.currentPassword, owner.password);
     if (!valid) return jsonError("Mật khẩu hiện tại không đúng", 400);
 
     owner.password = await bcrypt.hash(data.newPassword, 12);
+    owner.sessionVersion = (owner.sessionVersion ?? 0) + 1;
     await owner.save();
 
     return NextResponse.json({ ok: true });

@@ -63,6 +63,7 @@ export default function AdminLoginPage() {
             <Input
               id="email"
               type="email"
+              maxLength={254}
               placeholder="owner@xuannha.dev"
               className="border-white/10 bg-white/10 text-white placeholder:text-white/30"
               {...register("email")}
@@ -77,6 +78,7 @@ export default function AdminLoginPage() {
             <Input
               id="password"
               type="password"
+              maxLength={128}
               placeholder="••••••••"
               className="border-white/10 bg-white/10 text-white placeholder:text-white/30"
               {...register("password")}

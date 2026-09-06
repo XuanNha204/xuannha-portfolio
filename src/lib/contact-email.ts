@@ -1,4 +1,4 @@
-import nodemailer from "nodemailer";
+import nodemailer from "secure-mailer";
 import { z } from "zod";
 
 export type EmailNotificationStatus = "sent" | "failed" | "not_configured";

@@ -10,13 +10,14 @@ export const authConfig = {
   },
   session: {
     strategy: "jwt",
-    maxAge: 7 * 24 * 60 * 60, // 7 days
+    maxAge: 12 * 60 * 60,
   },
   callbacks: {
     jwt({ token, user }) {
       if (user) {
         token.id = user.id;
         token.role = (user as { role?: string }).role ?? "viewer";
+        token.sessionVersion = (user as { sessionVersion?: number }).sessionVersion ?? 0;
       }
       delete token.picture;
       return token;
@@ -25,6 +26,7 @@ export const authConfig = {
       if (session.user) {
         session.user.id = token.id as string;
         session.user.role = token.role as string;
+        session.user.sessionVersion = (token.sessionVersion as number) ?? 0;
         delete session.user.image;
       }
       return session;

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Save } from "lucide-react";
@@ -39,7 +39,7 @@ export function ProfileInfoForm() {
     handleSubmit,
     reset,
     setValue,
-    watch,
+    control,
     formState: { isSubmitting, isDirty },
   } = useForm<FormValues>({
     defaultValues: {
@@ -76,8 +76,8 @@ export function ProfileInfoForm() {
     return () => window.removeEventListener("beforeunload", warn);
   }, [isDirty]);
 
-  const avatar = watch("avatar");
-  const resumeUrl = watch("resumeUrl");
+  const avatar = useWatch({ control, name: "avatar" });
+  const resumeUrl = useWatch({ control, name: "resumeUrl" });
 
   async function onSubmit(values: FormValues) {
     try {

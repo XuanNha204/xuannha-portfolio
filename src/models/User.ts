@@ -6,6 +6,7 @@ export interface IUser {
   email: string;
   password: string;
   role: "owner" | "viewer";
+  sessionVersion: number;
   avatar?: string;
   headline?: string;
   about?: string;
@@ -23,6 +24,7 @@ const UserSchema = new Schema<IUser>(
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
     password: { type: String, required: true, select: false },
     role: { type: String, enum: ["owner", "viewer"], default: "viewer" },
+    sessionVersion: { type: Number, default: 0, select: false },
     avatar: { type: String, default: "" },
     headline: { type: String, default: "" },
     about: { type: String, default: "" },

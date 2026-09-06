@@ -5,11 +5,12 @@ import { contactSchema } from "@/schemas";
 import { jsonError, parseBody } from "@/lib/api-helpers";
 import { rateLimit } from "@/lib/rate-limit";
 import { sendContactNotification } from "@/lib/contact-email";
+import { getClientIp } from "@/lib/client-ip";
 
 export const runtime = "nodejs";
 
 export async function POST(req: NextRequest) {
-  const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+  const ip = getClientIp(req.headers);
   const { success } = rateLimit(`contact:${ip}`, { limit: 3, windowMs: 60_000 });
   if (!success) {
     return jsonError("Bạn gửi quá nhanh, vui lòng thử lại sau 1 phút.", 429);

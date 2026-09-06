@@ -19,10 +19,10 @@ export async function GET() {
 }
 
 export async function PUT(req: Request) {
-  const { error: authError } = await requireOwner();
+  const { error: authError } = await requireOwner(req);
   if (authError) return authError;
 
-  const { data, error } = await parseBody(req, siteSettingsSchema);
+  const { data, error } = await parseBody(req, siteSettingsSchema, 4_500_000);
   if (error) return error;
 
   try {
