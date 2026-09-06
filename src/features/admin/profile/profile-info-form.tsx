@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Save } from "lucide-react";
 import type { ProfileDTO } from "@/types";
@@ -28,7 +28,8 @@ interface FormValues {
 }
 
 export function ProfileInfoForm() {
-  const { data: profile, isLoading } = useQuery({
+  const queryClient = useQueryClient();
+  const { data: profile, isLoading, isError, refetch } = useQuery({
     queryKey: ["profile"],
     queryFn: () => apiGet<ProfileDTO>("/api/profile"),
   });
@@ -39,7 +40,7 @@ export function ProfileInfoForm() {
     reset,
     setValue,
     watch,
-    formState: { isSubmitting },
+    formState: { isSubmitting, isDirty },
   } = useForm<FormValues>({
     defaultValues: {
       name: "",
@@ -54,7 +55,7 @@ export function ProfileInfoForm() {
   });
 
   useEffect(() => {
-    if (profile) {
+    if (profile && !isDirty) {
       reset({
         name: profile.name ?? "",
         headline: profile.headline ?? "",
@@ -66,14 +67,23 @@ export function ProfileInfoForm() {
         careerGoal: profile.careerGoal ?? "",
       });
     }
-  }, [profile, reset]);
+  }, [profile, reset, isDirty]);
+
+  useEffect(() => {
+    if (!isDirty) return;
+    const warn = (event: BeforeUnloadEvent) => { event.preventDefault(); event.returnValue = ""; };
+    window.addEventListener("beforeunload", warn);
+    return () => window.removeEventListener("beforeunload", warn);
+  }, [isDirty]);
 
   const avatar = watch("avatar");
   const resumeUrl = watch("resumeUrl");
 
   async function onSubmit(values: FormValues) {
     try {
-      await apiPut("/api/profile", values);
+      const saved = await apiPut<ProfileDTO>("/api/profile", values);
+      queryClient.setQueryData(["profile"], saved);
+      reset(values);
       toast.success("Đã lưu hồ sơ");
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Lưu thất bại");
@@ -83,6 +93,8 @@ export function ProfileInfoForm() {
   if (isLoading) {
     return <Skeleton className="h-96 w-full" />;
   }
+
+  if (isError) return <div role="alert"><p>Không tải được hồ sơ.</p><Button onClick={() => refetch()}>Thử lại</Button></div>;
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="grid gap-6 xl:grid-cols-3">
@@ -97,7 +109,7 @@ export function ProfileInfoForm() {
               <Input id="name" {...register("name", { required: true })} />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="headline">Headline</Label>
+              <Label htmlFor="headline">Chức danh / công việc</Label>
               <Input
                 id="headline"
                 placeholder="Fullstack Developer…"
@@ -117,11 +129,8 @@ export function ProfileInfoForm() {
           </div>
           <div className="space-y-2">
             <Label htmlFor="about">Giới thiệu bản thân</Label>
-            <Textarea id="about" rows={6} {...register("about")} />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="careerGoal">Mục tiêu nghề nghiệp</Label>
-            <Textarea id="careerGoal" rows={4} {...register("careerGoal")} />
+            <Textarea id="about" rows={6} maxLength={650} {...register("about")} />
+            <p className="text-xs text-muted">Viết ngắn, khoảng 3–5 câu. Trang giới thiệu hiển thị tối đa 650 ký tự.</p>
           </div>
           <Button type="submit" variant="accent" loading={isSubmitting}>
             {!isSubmitting && <Save className="h-4 w-4" />}

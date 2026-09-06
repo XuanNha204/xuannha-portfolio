@@ -4,10 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { apiGet, apiPost, apiPut, apiDelete } from "@/lib/fetcher";
 
-/**
- * Generic CRUD hook for simple admin resources
- * (skills, experiences, educations, certificates, social links, categories...).
- */
+/** Shared mutations for the social link manager. */
 export function useCrud<T extends { _id: string }>(resource: string) {
   const queryClient = useQueryClient();
   const queryKey = [resource];

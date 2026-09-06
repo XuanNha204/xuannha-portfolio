@@ -1,22 +1,5 @@
 "use client";
-
-import { MotionConfig } from "framer-motion";
 import { Toaster } from "sonner";
-
 export function Providers({ children }: { children: React.ReactNode }) {
-  return (
-    <MotionConfig reducedMotion="user">
-      {children}
-      {/* duration: toast tự tắt sau 4s; offset đẩy toast xuống dưới header (h-16)
-          để không che nút chuyển theme / dropdown ngôn ngữ. */}
-      <Toaster
-        position="top-right"
-        richColors
-        closeButton
-        duration={4000}
-        offset={{ top: 76, right: 16 }}
-        mobileOffset={{ top: 72 }}
-      />
-    </MotionConfig>
-  );
+  return <>{children}<Toaster position="top-right" richColors closeButton duration={4000} offset={{ top: 76, right: 16 }} mobileOffset={{ top: 72 }} /></>;
 }

@@ -1,8 +1,10 @@
 import { Schema, model, models, type Model } from "mongoose";
+import type { SiteContent } from "@/lib/site-content";
 
 export interface ISiteSettings {
   _id: string;
   siteName: string;
+  content?: SiteContent;
   tagline?: string;
   logo?: string;
   favicon?: string;
@@ -24,6 +26,7 @@ export interface ISiteSettings {
 const SiteSettingsSchema = new Schema<ISiteSettings>(
   {
     siteName: { type: String, default: "XuanNha.Dev" },
+    content: { type: Schema.Types.Mixed, default: {} },
     tagline: { type: String, default: "Vibe Coding Studio" },
     logo: { type: String, default: "" },
     favicon: { type: String, default: "" },

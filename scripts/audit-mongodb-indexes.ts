@@ -52,36 +52,7 @@ async function main() {
     (await db.listCollections({}, { nameOnly: true }).toArray()).map((item) => item.name)
   );
 
-  const today = new Date().toISOString().slice(0, 10);
   const queries: AuditQuery[] = [
-    {
-      name: "analytics upsert lookup",
-      collection: "analytics",
-      filter: { path: "/", date: today },
-    },
-    {
-      name: "published projects",
-      collection: "projects",
-      filter: { status: "published" },
-      sort: { order: 1, completedAt: -1 },
-    },
-    {
-      name: "featured projects",
-      collection: "projects",
-      filter: { status: "published", featured: true },
-      sort: { order: 1, completedAt: -1 },
-    },
-    {
-      name: "published posts",
-      collection: "blogposts",
-      filter: { status: "published" },
-      sort: { publishedAt: -1 },
-    },
-    {
-      name: "scheduled posts",
-      collection: "blogposts",
-      filter: { status: "scheduled", scheduledAt: { $lte: new Date() } },
-    },
     {
       name: "active messages",
       collection: "messages",

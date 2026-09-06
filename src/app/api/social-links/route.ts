@@ -6,5 +6,4 @@ export const { GET, POST } = createCollectionHandlers({
   model: SocialLink,
   schema: socialLinkSchema,
   sort: { order: 1 },
-  publicRead: true,
 });

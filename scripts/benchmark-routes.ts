@@ -22,19 +22,6 @@ const warmupCount = Math.max(0, Number(process.env.PERF_WARMUPS ?? 1));
 
 const targets: Target[] = [
   { name: "home", path: "/" },
-  { name: "about", path: "/about" },
-  { name: "projects", path: "/projects" },
-  { name: "blog", path: "/blog" },
-  { name: "contact", path: "/contact" },
-  {
-    name: "analytics",
-    path: "/api/analytics/track",
-    init: {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ path: "/__performance_audit__" }),
-    },
-  },
 ];
 
 function percentile(values: number[], ratio: number) {

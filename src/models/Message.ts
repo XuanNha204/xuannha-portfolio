@@ -8,6 +8,7 @@ export interface IMessage {
   content: string;
   read: boolean;
   archived: boolean;
+  emailNotification?: "pending" | "sent" | "failed" | "not_configured";
   createdAt: Date;
   updatedAt: Date;
 }
@@ -20,6 +21,7 @@ const MessageSchema = new Schema<IMessage>(
     content: { type: String, required: true },
     read: { type: Boolean, default: false, index: true },
     archived: { type: Boolean, default: false },
+    emailNotification: { type: String, enum: ["pending", "sent", "failed", "not_configured"], default: "pending" },
   },
   { timestamps: true }
 );

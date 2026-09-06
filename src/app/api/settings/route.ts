@@ -6,6 +6,8 @@ import { requireOwner, jsonError, parseBody } from "@/lib/api-helpers";
 import { revalidateSite } from "@/lib/crud-factory";
 
 export async function GET() {
+  const { error } = await requireOwner();
+  if (error) return error;
   try {
     await dbConnect();
     let settings = await SiteSettings.findOne().lean();

@@ -69,7 +69,7 @@ export function CrudSection<T extends { _id: string }, F>({
         </Button>
       </div>
 
-      {list.isLoading ? (
+      {list.isError ? <div role="alert"><p>Không tải được danh sách.</p><Button onClick={() => list.refetch()}>Thử lại</Button></div> : list.isLoading ? (
         <div className="space-y-3">
           {Array.from({ length: 3 }).map((_, i) => (
             <Skeleton key={i} className="h-20" />

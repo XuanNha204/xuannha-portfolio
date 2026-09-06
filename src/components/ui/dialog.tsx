@@ -1,73 +1,28 @@
 "use client";
-
-import { useEffect, type ReactNode } from "react";
-import { createPortal } from "react-dom";
-import { motion, AnimatePresence } from "framer-motion";
+import { useEffect, useId, useRef, type ReactNode } from "react";
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-interface DialogProps {
-  open: boolean;
-  onClose: () => void;
-  title?: string;
-  children: ReactNode;
-  className?: string;
-}
-
+interface DialogProps { open: boolean; onClose: () => void; title?: string; children: ReactNode; className?: string; }
 export function Dialog({ open, onClose, title, children, className }: DialogProps) {
+  const ref = useRef<HTMLDialogElement>(null);
+  const titleId = useId();
   useEffect(() => {
-    function onKey(e: KeyboardEvent) {
-      if (e.key === "Escape") onClose();
-    }
-    if (open) {
-      document.addEventListener("keydown", onKey);
-      document.body.style.overflow = "hidden";
-    }
-    return () => {
-      document.removeEventListener("keydown", onKey);
-      document.body.style.overflow = "";
-    };
-  }, [open, onClose]);
-
-  if (typeof window === "undefined") return null;
-
-  return createPortal(
-    <AnimatePresence>
-      {open && (
-        <motion.div
-          className="fixed inset-0 z-[100] flex items-center justify-center p-4"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-        >
-          <div className="absolute inset-0 bg-black/55 backdrop-blur-sm" onClick={onClose} />
-          <motion.div
-            role="dialog"
-            aria-modal="true"
-            className={cn(
-              "relative z-10 w-full max-w-lg max-h-[85vh] overflow-y-auto rounded-xl border border-border bg-surface p-6 shadow-2xl",
-              className
-            )}
-            initial={{ opacity: 0, scale: 0.95, y: 12 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.97, y: 8 }}
-            transition={{ duration: 0.22, ease: [0.21, 0.47, 0.32, 0.98] }}
-          >
-            <div className="mb-4 flex items-center justify-between">
-              {title && <h3 className="text-lg font-semibold text-primary">{title}</h3>}
-              <button
-                onClick={onClose}
-                className="rounded-md p-1 text-muted transition-colors hover:bg-border/50 hover:text-primary"
-                aria-label="Đóng"
-              >
-                <X className="h-5 w-5" />
-              </button>
-            </div>
-            {children}
-          </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>,
-    document.body
-  );
+    const dialog = ref.current;
+    if (open && !dialog?.open) dialog?.showModal();
+    if (!open && dialog?.open) dialog.close();
+    if (!open) return;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = previous; };
+  }, [open]);
+  return <dialog ref={ref} aria-labelledby={title ? titleId : undefined} aria-label={title ? undefined : "Chỉnh sửa nội dung"}
+    onCancel={(event) => { event.preventDefault(); onClose(); }}
+    onClick={(event) => { if (event.target === event.currentTarget) { const box = event.currentTarget.getBoundingClientRect(); if (event.clientX < box.left || event.clientX > box.right || event.clientY < box.top || event.clientY > box.bottom) onClose(); } }}
+    className={cn("fixed inset-0 m-auto max-h-[85vh] w-[calc(100%-2rem)] max-w-lg overflow-y-auto rounded-xl border border-border bg-surface p-6 text-primary shadow-2xl backdrop:bg-black/60", className)}>
+    <div className="mb-4 flex items-center justify-between gap-4">
+      {title && <h2 id={titleId} className="text-lg font-semibold">{title}</h2>}
+      <button type="button" onClick={onClose} className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg text-muted hover:bg-border/50" aria-label="Đóng"><X size={20} /></button>
+    </div>
+    {open && children}
+  </dialog>;
 }

@@ -1,27 +1,12 @@
 import type { Metadata } from "next";
-import { Inter, Space_Grotesk, JetBrains_Mono } from "next/font/google";
-import NextTopLoader from "nextjs-toploader";
+import { Inter } from "next/font/google";
 import { getSiteSettings } from "@/services/settings.service";
-import { Providers } from "@/components/providers";
-import { AnalyticsTracker } from "@/components/analytics-tracker";
 import { absoluteUrl } from "@/lib/utils";
 import "./globals.css";
 
 const inter = Inter({
   subsets: ["latin", "vietnamese"],
   variable: "--font-inter",
-  display: "swap",
-});
-
-const spaceGrotesk = Space_Grotesk({
-  subsets: ["latin", "vietnamese"],
-  variable: "--font-space-grotesk",
-  display: "swap",
-});
-
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ["latin", "vietnamese"],
-  variable: "--font-jetbrains-mono",
   display: "swap",
 });
 
@@ -52,10 +37,10 @@ function faviconIcons(favicon: string | undefined): Metadata["icons"] {
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSiteSettings();
-  const title = settings.seo?.metaTitle || `${settings.siteName} — ${settings.tagline}`;
+  const title = settings.seo?.metaTitle || `${settings.siteName}${settings.tagline ? ` — ${settings.tagline}` : ""}`;
   const description =
     settings.seo?.metaDescription ||
-    "Portfolio, blog và dự án của Xuân Nhã — Vibe Coding Studio.";
+    "Giới thiệu, kết nối và hợp tác cùng Xuân Nhã.";
 
   return {
     metadataBase: new URL(absoluteUrl()),
@@ -82,7 +67,6 @@ export async function generateMetadata(): Promise<Metadata> {
     icons: faviconIcons(settings.favicon),
     alternates: {
       canonical: absoluteUrl(),
-      types: { "application/rss+xml": absoluteUrl("/rss.xml") },
     },
     verification: settings.googleSearchConsoleId
       ? { google: settings.googleSearchConsoleId }
@@ -94,22 +78,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="vi"
+      data-site-theme="dark"
       suppressHydrationWarning
-      className={`${inter.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable}`}
+      className={inter.variable}
     >
       <body className="min-h-screen font-sans antialiased">
-        {/* Thanh progress chạy ngay khi bắt đầu điều hướng — phản hồi tức thì
-            thay cho màn hình trắng. Màu lấy từ --color-accent nên tự khớp theme. */}
-        <NextTopLoader
-          color="var(--color-accent)"
-          height={2}
-          showSpinner={false}
-          shadow="0 0 8px var(--color-accent)"
-        />
-        <Providers>
-          {children}
-          <AnalyticsTracker />
-        </Providers>
+        {children}
       </body>
     </html>
   );

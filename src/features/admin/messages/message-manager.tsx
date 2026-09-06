@@ -25,7 +25,7 @@ export function MessageManager() {
   const [page, setPage] = useState(1);
   const [expanded, setExpanded] = useState<string | null>(null);
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["messages", filter, page],
     queryFn: () =>
       apiGet<Paginated<MessageDTO>>(`/api/messages?filter=${filter}&page=${page}&limit=20`),
@@ -71,7 +71,7 @@ export function MessageManager() {
             className={cn(
               "rounded-lg border px-4 py-2 text-sm font-medium transition-colors",
               filter === f.id
-                ? "border-accent bg-accent text-white"
+                ? "border-accent bg-accent text-accent-fg"
                 : "border-border bg-surface text-secondary hover:border-accent hover:text-accent"
             )}
           >
@@ -80,7 +80,7 @@ export function MessageManager() {
         ))}
       </div>
 
-      {isLoading ? (
+      {isError ? <div role="alert"><p>Không tải được tin nhắn.</p><Button onClick={() => refetch()}>Thử lại</Button></div> : isLoading ? (
         <div className="space-y-3">
           {Array.from({ length: 5 }).map((_, i) => (
             <Skeleton key={i} className="h-20" />
@@ -132,6 +132,7 @@ export function MessageManager() {
 
                 {expanded === message._id && (
                   <div className="border-t border-border px-4 py-4">
+                    <p className="mb-3 text-xs text-muted">{message.emailNotification === "sent" ? "Thông báo đã được máy chủ email chấp nhận." : message.emailNotification === "failed" ? "Chưa gửi được email thông báo. Tin nhắn đã lưu tại đây." : message.emailNotification === "pending" ? "Email đang xử lý hoặc chưa xác nhận kết quả. Tin nhắn đã lưu." : message.emailNotification === "not_configured" ? "Chưa cấu hình Gmail. Tin nhắn đã lưu tại đây." : "Tin nhắn được lưu trước khi bật thông báo email."}</p>
                     <p className="whitespace-pre-line text-sm leading-relaxed text-secondary">
                       {message.content}
                     </p>

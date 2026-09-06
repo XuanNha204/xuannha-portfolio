@@ -3,14 +3,16 @@ import { dbConnect } from "@/lib/db";
 import { SiteSettings } from "@/models/SiteSettings";
 import { serialize } from "./serialize";
 import type { SiteSettingsDTO } from "@/types";
+import { defaultSiteContent } from "@/lib/site-content";
 
 const FALLBACK_SETTINGS: SiteSettingsDTO = {
-  siteName: "XuanNha.Dev",
-  tagline: "Vibe Coding Studio",
+  siteName: "Xuân Nhã",
+  tagline: "Code. Khám phá. Sáng tạo.",
+  content: defaultSiteContent,
   seo: {
-    metaTitle: "XuanNha.Dev — Vibe Coding Studio",
+    metaTitle: "Xuân Nhã — Một chút tò mò. Vô hạn ý tưởng.",
     metaDescription:
-      "Portfolio, blog và dự án của Xuân Nhã — lập trình viên fullstack theo hướng AI-Assisted Development.",
+      "Giới thiệu, kết nối và hợp tác cùng Xuân Nhã.",
     keywords: ["portfolio", "developer", "nextjs", "vibe coding"],
   },
   theme: "light",
