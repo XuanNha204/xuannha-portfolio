@@ -29,7 +29,8 @@ async function main() {
       payload.messages[0]?.role !== "system" ||
       !payload.messages[0]?.content?.includes("<portfolio_data>") ||
       !payload.messages[0]?.content?.includes("githubProjects") ||
-      payload.messages[1]?.role !== "user"
+      payload.messages[1]?.role !== "user" ||
+      payload.chat_template_kwargs?.enable_thinking !== false
     ) { res.writeHead(400).end(); return; }
     res.writeHead(200, { "Content-Type": "text/event-stream" });
     res.write('data: {"choices":[{"delta":{"content":"Fixture "}}]}\n\n');
@@ -39,7 +40,7 @@ async function main() {
   await once(provider, "listening");
   const address = provider.address();
   if (!address || typeof address === "string") throw new Error("Mock provider missing port");
-  const env = { ...process.env, NODE_ENV: "production" as const, MONGODB_URI: uri.toString(), ADMIN_EMAIL: "fixture@example.com", ADMIN_PASSWORD: password, AUTH_TRUST_HOST: "true", SECURITY_FIXTURE: "1", GITHUB_USERNAME: "!", GITHUB_TOKEN: "", CHAT_PROVIDER_ORDER: "openai", OPENAI_API_KEY: "fixture-only", OPENAI_BASE_URL: `http://127.0.0.1:${address.port}/v1`, OPENAI_MODEL: "fixture" };
+  const env = { ...process.env, NODE_ENV: "production" as const, MONGODB_URI: uri.toString(), ADMIN_EMAIL: "fixture@example.com", ADMIN_PASSWORD: password, AUTH_TRUST_HOST: "true", SECURITY_FIXTURE: "1", GITHUB_USERNAME: "!", GITHUB_TOKEN: "", CHAT_PROVIDER_ORDER: "llama", LLAMA_API_KEY: "fixture-only", LLAMA_BASE_URL: `http://127.0.0.1:${address.port}/v1`, LLAMA_MODEL: "fixture" };
   let server: ReturnType<typeof spawn> | undefined;
   // Fixture contacts must never send to a real mailbox inherited from local env.
   Object.assign(env, { GMAIL_USER: "", GMAIL_APP_PASSWORD: "", CONTACT_NOTIFICATION_EMAIL: "" });

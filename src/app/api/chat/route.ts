@@ -100,6 +100,9 @@ export async function POST(req: Request) {
           stream: true,
           max_tokens: 700,
           temperature: 0.25,
+          ...(provider.id === "llama"
+            ? { chat_template_kwargs: { enable_thinking: false } }
+            : {}),
         }),
         signal: AbortSignal.any([req.signal, abort.signal]),
       });
