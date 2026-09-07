@@ -45,6 +45,12 @@ const nextConfig: NextConfig = {
     ];
   },
   images: {
+    localPatterns: [
+      // Keep the default behavior for static local images without query strings.
+      { pathname: "/**", search: "" },
+      // The profile service appends ?v=<updatedAt> to invalidate cached avatars.
+      { pathname: "/api/profile/avatar" },
+    ],
     remotePatterns: [
       { protocol: "https", hostname: "images.unsplash.com" },
       { protocol: "https", hostname: "avatars.githubusercontent.com" },

@@ -102,6 +102,6 @@ export default async function HomePage() {
         </div>
       </div>
     </section>
-    {content.chatbotEnabled && <ChatWidget name={content.chatbotName} greeting={content.chatbotGreeting} />}
+    {content.chatbotEnabled && <ChatWidget name={content.chatbotName} greeting={content.chatbotGreeting} ownerName={profile.name} resumeUrl={profile.resumeUrl} />}
   </>;
 }

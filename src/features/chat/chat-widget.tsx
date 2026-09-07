@@ -2,10 +2,17 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { ArrowUp, ArrowUpRight, RotateCcw, Square, X } from "lucide-react";
+import { ArrowUp, ArrowUpRight, Download, FileText, RotateCcw, Square, X } from "lucide-react";
 type Message = { role: "user" | "assistant"; content: string };
 
-export function ChatWidget({ name, greeting }: { name: string; greeting: string }) {
+interface ChatWidgetProps {
+  name: string;
+  greeting: string;
+  ownerName: string;
+  resumeUrl?: string;
+}
+
+export function ChatWidget({ name, greeting, ownerName, resumeUrl }: ChatWidgetProps) {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [draft, setDraft] = useState("");
@@ -100,7 +107,15 @@ export function ChatWidget({ name, greeting }: { name: string; greeting: string 
       </div>
       <div className="chat-log" ref={logRef} role="log" aria-label="Tin nhắn" aria-live="polite" aria-relevant="additions text">
         <div className="chat-welcome"><span>CHÀO BẠN, MÌNH LÀ {name.toUpperCase()} 👋</span><p>{greeting}</p></div>
-        {messages.map((message, index) => message.content && <div key={index} className={`chat-message chat-${message.role}`}><span className="sr-only">{message.role === "user" ? "Bạn: " : name + ": "}</span>{message.content}</div>)}
+        {messages.map((message, index) => message.content && <div key={index} className={`chat-message chat-${message.role}`}>
+          <span className="sr-only">{message.role === "user" ? "Bạn: " : name + ": "}</span>
+          <span className="chat-message-copy">{message.content}</span>
+          {message.role === "assistant" && resumeUrl && <a className="chat-cv-attachment" href={resumeUrl} target="_blank" rel="noopener noreferrer" download="xuan-nha-cv.pdf" aria-label={`Tải CV của ${ownerName} dạng PDF`}>
+            <span className="chat-cv-icon" aria-hidden="true"><FileText size={17} strokeWidth={1.7} /></span>
+            <span className="chat-cv-copy"><strong>CV của {ownerName}</strong><small>Tải xuống bản PDF</small></span>
+            <Download className="chat-cv-download" size={15} aria-hidden="true" />
+          </a>}
+        </div>)}
         {busy && !messages.at(-1)?.content && <div className="chat-typing" role="status"><i /><i /><i /><span className="sr-only">Đang trả lời</span></div>}
         {error && <div className="chat-error" role="alert">{error}<button type="button" onClick={() => { const last = [...messages].reverse().find((message) => message.role === "user"); if (last) void send(last.content, true); }}>Thử lại</button></div>}
         {!messages.length && <div className="chat-suggestions">{["Giới thiệu về Nhã", "Nhã có những kỹ năng gì?", "Mình muốn hợp tác"].map((text) => <button key={text} onClick={() => void send(text)} disabled={busy}>{text}<ArrowUpRight size={13} /></button>)}</div>}
