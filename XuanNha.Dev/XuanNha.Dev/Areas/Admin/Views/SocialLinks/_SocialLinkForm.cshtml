@@ -1,0 +1,29 @@
+@model SocialLinkFormViewModel
+
+<div asp-validation-summary="ModelOnly" class="text-danger admin-validation"></div>
+
+<div class="admin-form-grid">
+    <label>
+        Platform
+        <input asp-for="Platform" placeholder="e.g. GitHub, LinkedIn, X" />
+        <span asp-validation-for="Platform" class="text-danger"></span>
+    </label>
+
+    <label>
+        URL
+        <input asp-for="Url" placeholder="https://github.com/username" />
+        <span asp-validation-for="Url" class="text-danger"></span>
+    </label>
+
+    <label>
+        Icon URL
+        <input asp-for="IconUrl" />
+        <span asp-validation-for="IconUrl" class="text-danger"></span>
+    </label>
+
+    <label>
+        Display order
+        <input asp-for="DisplayOrder" type="number" />
+        <span asp-validation-for="DisplayOrder" class="text-danger"></span>
+    </label>
+</div>

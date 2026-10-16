@@ -1,0 +1,177 @@
+@model AboutViewModel
+
+@{
+    ViewData["Title"] = L["About"].Value;
+    ViewData["Description"] = Model.Profile?.Headline
+        ?? "About Huỳnh Xuân Nhã — background, skills, experience, and education.";
+    ViewData["OgImage"] = Model.Profile?.AvatarUrl;
+}
+
+<section class="content-band">
+    <div class="container-xl" style="max-width: 960px;">
+
+        @* ===== Header / hero ===== *@
+        <div class="d-flex flex-wrap align-items-center gap-4 mb-5">
+            @if (!string.IsNullOrEmpty(Model.Profile?.AvatarUrl))
+            {
+                <img src="@Model.Profile.AvatarUrl" alt="Avatar"
+                     style="width:128px;height:128px;object-fit:cover;border-radius:50%;" />
+            }
+            <div>
+                <p class="section-kicker">@L["About"]</p>
+                <h1>Huỳnh Xuân Nhã</h1>
+                @if (!string.IsNullOrEmpty(Model.Profile?.Headline))
+                {
+                    <p class="hero-lead">@Model.Profile.Headline</p>
+                }
+                @if (!string.IsNullOrEmpty(Model.Profile?.Location))
+                {
+                    <p>📍 @Model.Profile.Location</p>
+                }
+                <div class="d-flex flex-wrap gap-2 mt-2">
+                    @foreach (var link in Model.SocialLinks)
+                    {
+                        <a class="btn-ghost-neo" href="@link.Url" target="_blank" rel="noreferrer">@link.Platform</a>
+                    }
+                    @if (!string.IsNullOrEmpty(Model.Profile?.ResumeUrl))
+                    {
+                        <a class="btn-primary-neo" href="@Model.Profile.ResumeUrl" target="_blank" rel="noreferrer">@L["Download CV"]</a>
+                    }
+                </div>
+            </div>
+        </div>
+
+        @if (Model.IsEmpty)
+        {
+            <div class="work-card">
+                <p class="section-kicker">@L["Coming soon"]</p>
+                <h3>@L["This page is being written."]</h3>
+                <p>@L["Profile details will appear here once they are added in the Admin dashboard (Profile, Skills, Experience, Education, Certificates, Social Links)."]</p>
+            </div>
+        }
+
+        @* ===== About me ===== *@
+        @if (!string.IsNullOrWhiteSpace(Model.Profile?.AboutMe))
+        {
+            <div class="mb-5">
+                <p class="section-kicker">@L["Intro"]</p>
+                <h2>@L["About me"]</h2>
+                <p style="white-space: pre-wrap;">@Model.Profile.AboutMe</p>
+            </div>
+        }
+
+        @* ===== Skills ===== *@
+        @if (Model.SkillGroups.Any())
+        {
+            <div class="mb-5">
+                <p class="section-kicker">@L["Toolbox"]</p>
+                <h2>@L["Skills"]</h2>
+                <div class="row g-3">
+                    @foreach (var group in Model.SkillGroups)
+                    {
+                        <div class="col-md-6">
+                            <div class="work-card">
+                                <h3>@(string.IsNullOrWhiteSpace(group.Key) ? L["General"].Value : group.Key)</h3>
+                                <ul class="capability-list">
+                                    @foreach (var skill in group)
+                                    {
+                                        <li>
+                                            @skill.Name
+                                            @if (skill.Level > 0)
+                                            {
+                                                <div class="progress" style="height:6px;" role="progressbar"
+                                                     aria-valuenow="@skill.Level" aria-valuemin="0" aria-valuemax="100"
+                                                     aria-label="@skill.Name level">
+                                                    <div class="progress-bar" style="width:@(skill.Level)%;"></div>
+                                                </div>
+                                            }
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+
+        @* ===== Experience ===== *@
+        @if (Model.Experiences.Any())
+        {
+            <div class="mb-5">
+                <p class="section-kicker">@L["Career"]</p>
+                <h2>@L["Experience"]</h2>
+                @foreach (var experience in Model.Experiences)
+                {
+                    <div class="work-card mb-3">
+                        <p class="section-kicker">
+                            @experience.StartDate.ToString("MM/yyyy") – @(experience.EndDate?.ToString("MM/yyyy") ?? L["Present"].Value)
+                        </p>
+                        <h3>@experience.Position · @experience.Company</h3>
+                        @if (!string.IsNullOrWhiteSpace(experience.Description))
+                        {
+                            <p style="white-space: pre-wrap;">@experience.Description</p>
+                        }
+                    </div>
+                }
+            </div>
+        }
+
+        @* ===== Education ===== *@
+        @if (Model.EducationItems.Any())
+        {
+            <div class="mb-5">
+                <p class="section-kicker">@L["Learning"]</p>
+                <h2>@L["Education"]</h2>
+                @foreach (var education in Model.EducationItems)
+                {
+                    <div class="work-card mb-3">
+                        <p class="section-kicker">
+                            @education.StartYear – @(education.EndYear?.ToString() ?? L["Present"].Value)
+                        </p>
+                        <h3>@education.School</h3>
+                        @if (!string.IsNullOrWhiteSpace(education.Major))
+                        {
+                            <p>@education.Major</p>
+                        }
+                        @if (!string.IsNullOrWhiteSpace(education.Description))
+                        {
+                            <p style="white-space: pre-wrap;">@education.Description</p>
+                        }
+                    </div>
+                }
+            </div>
+        }
+
+        @* ===== Certificates ===== *@
+        @if (Model.Certificates.Any())
+        {
+            <div class="mb-5">
+                <p class="section-kicker">@L["Credentials"]</p>
+                <h2>@L["Certificates"]</h2>
+                <ul class="capability-list">
+                    @foreach (var certificate in Model.Certificates)
+                    {
+                        <li>
+                            @if (!string.IsNullOrEmpty(certificate.CredentialUrl))
+                            {
+                                <a href="@certificate.CredentialUrl" target="_blank" rel="noreferrer">@certificate.Name</a>
+                            }
+                            else
+                            {
+                                @certificate.Name
+                            }
+                            — @certificate.Issuer
+                            @if (certificate.IssuedAt.HasValue)
+                            {
+                                <text> (@certificate.IssuedAt.Value.Year)</text>
+                            }
+                        </li>
+                    }
+                </ul>
+            </div>
+        }
+
+        <a class="btn-ghost-neo" asp-controller="Contact" asp-action="Index">@L["Get in touch"] →</a>
+    </div>
+</section>

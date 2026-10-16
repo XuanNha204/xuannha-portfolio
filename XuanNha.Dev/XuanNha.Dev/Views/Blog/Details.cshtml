@@ -1,0 +1,33 @@
+@model BlogDetailDto
+
+@{
+    ViewData["Title"] = Model.Title;
+    ViewData["Description"] = Model.Summary;
+    ViewData["OgImage"] = Model.CoverImageUrl;
+    ViewData["OgType"] = "article";
+}
+
+<section class="content-band">
+    <div class="container-xl" style="max-width: 860px;">
+        <p class="section-kicker">
+            @(Model.CategoryName ?? L["Article"].Value) · @L["{0} min read", Model.ReadingTimeMinutes]
+            @if (Model.PublishedAt.HasValue)
+            {
+                <text> · @Model.PublishedAt.Value.ToString("MMMM d, yyyy")</text>
+            }
+        </p>
+        <h1>@Model.Title</h1>
+        <p class="hero-lead">@Model.Summary</p>
+
+        @if (!string.IsNullOrEmpty(Model.CoverImageUrl))
+        {
+            <img src="@Model.CoverImageUrl" alt="@Model.Title" style="width:100%;max-height:440px;object-fit:cover;border-radius:16px;" class="mb-4" />
+        }
+
+        <article class="blog-content">
+            @Html.Raw(Model.ContentHtml)
+        </article>
+
+        <a class="btn-ghost-neo mt-4 d-inline-block" asp-controller="Blog" asp-action="Index">← @L["All articles"]</a>
+    </div>
+</section>

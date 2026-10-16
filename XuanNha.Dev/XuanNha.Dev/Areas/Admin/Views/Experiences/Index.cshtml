@@ -1,0 +1,60 @@
+@model List<XuanNha.Dev.Entities.Profile.Experience>
+
+@{
+    ViewData["Title"] = "Experience";
+}
+
+<section class="admin-page-heading">
+    <div>
+        <p class="section-kicker">About Page</p>
+        <h1>Experience</h1>
+    </div>
+    <a class="btn-primary-neo" asp-area="Admin" asp-controller="Experiences" asp-action="Create">New Entry</a>
+</section>
+
+@if (TempData["AdminSuccess"] is string message)
+{
+    <div class="admin-alert">@message</div>
+}
+
+<section class="admin-table-wrap">
+    @if (!Model.Any())
+    {
+        <div class="admin-empty-state">
+            <p class="section-kicker">No experience yet</p>
+            <h1>Add the first work experience entry.</h1>
+            <a class="btn-primary-neo" asp-area="Admin" asp-controller="Experiences" asp-action="Create">Create Entry</a>
+        </div>
+    }
+    else
+    {
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Position</th>
+                    <th>Company</th>
+                    <th>Period</th>
+                    <th class="admin-table-actions">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var experience in Model)
+                {
+                    <tr>
+                        <td><strong>@experience.Position</strong></td>
+                        <td>@experience.Company</td>
+                        <td>@experience.StartDate.ToString("MM/yyyy") – @(experience.EndDate?.ToString("MM/yyyy") ?? "Present")</td>
+                        <td class="admin-row-actions">
+                            <a asp-area="Admin" asp-controller="Experiences" asp-action="Edit" asp-route-id="@experience.Id">Edit</a>
+                            <form asp-area="Admin" asp-controller="Experiences" asp-action="Delete" method="post">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@experience.Id" />
+                                <button type="submit" class="danger-link">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</section>

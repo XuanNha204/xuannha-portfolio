@@ -1,0 +1,19 @@
+@model TagFormViewModel
+
+@{
+    ViewData["Title"] = "Edit Tag";
+}
+
+<section class="admin-page-heading">
+    <div>
+        <p class="section-kicker">Taxonomy</p>
+        <h1>Edit tag</h1>
+    </div>
+    <a class="btn-ghost-neo" asp-area="Admin" asp-controller="Tags" asp-action="Index">Back to list</a>
+</section>
+
+<form asp-area="Admin" asp-controller="Tags" asp-action="Edit" asp-route-id="@Model.Id" method="post" class="admin-form">
+    <input type="hidden" asp-for="Id" />
+    <partial name="_TagForm" model="Model" />
+    <button type="submit" class="btn-primary-neo">Save Changes</button>
+</form>

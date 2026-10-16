@@ -1,0 +1,19 @@
+@model CertificateFormViewModel
+
+@{
+    ViewData["Title"] = "Edit Certificate";
+}
+
+<section class="admin-page-heading">
+    <div>
+        <p class="section-kicker">About Page</p>
+        <h1>Edit certificate</h1>
+    </div>
+    <a class="btn-ghost-neo" asp-area="Admin" asp-controller="Certificates" asp-action="Index">Back to list</a>
+</section>
+
+<form asp-area="Admin" asp-controller="Certificates" asp-action="Edit" asp-route-id="@Model.Id" method="post" class="admin-form">
+    <input type="hidden" asp-for="Id" />
+    <partial name="_CertificateForm" model="Model" />
+    <button type="submit" class="btn-primary-neo">Save Changes</button>
+</form>

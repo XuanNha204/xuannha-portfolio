@@ -1,0 +1,17 @@
+@model TagFormViewModel
+
+<div asp-validation-summary="ModelOnly" class="text-danger admin-validation"></div>
+
+<div class="admin-form-grid">
+    <label>
+        Name
+        <input asp-for="Name" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </label>
+
+    <label>
+        Slug
+        <input asp-for="Slug" placeholder="Leave empty to auto-generate" />
+        <span asp-validation-for="Slug" class="text-danger"></span>
+    </label>
+</div>

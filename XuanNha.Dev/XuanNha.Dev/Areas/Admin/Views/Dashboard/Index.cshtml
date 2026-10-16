@@ -1,0 +1,52 @@
+@model DashboardViewModel
+
+@{
+    ViewData["Title"] = "Overview";
+}
+
+<section class="admin-dashboard-heading">
+    <div>
+        <p class="section-kicker">@L["Operational Snapshot"]</p>
+        <h1>@L["Content system status"]</h1>
+    </div>
+    <span>SQL Server / Code First / Identity</span>
+</section>
+
+<section class="admin-stat-grid" aria-label="CMS statistics">
+    <article>
+        <span>@L["Total Projects"]</span>
+        <strong>@Model.ProjectCount</strong>
+    </article>
+    <article>
+        <span>@L["Published Projects"]</span>
+        <strong>@Model.PublishedProjectCount</strong>
+    </article>
+    <article>
+        <span>@L["Blog Posts"]</span>
+        <strong>@Model.BlogPostCount</strong>
+    </article>
+    <article>
+        <span>@L["Messages"]</span>
+        <strong>@Model.ContactMessageCount</strong>
+    </article>
+    <article>
+        <span>@L["Unread Messages"]</span>
+        <strong>@Model.UnreadContactMessageCount</strong>
+    </article>
+    <article>
+        <span>@L["Media Files"]</span>
+        <strong>@Model.MediaFileCount</strong>
+    </article>
+    <article>
+        <span>@L["Skills"]</span>
+        <strong>@Model.SkillCount</strong>
+    </article>
+</section>
+
+<section class="admin-workflow-panel">
+    <div>
+        <h2>@L["Next modules"]</h2>
+        <p>@L["Project CRUD UI, Blog editor, Media Manager, Profile settings, and Contact inbox are ready to be layered on top of the database and API foundation."]</p>
+    </div>
+    <a class="btn-ghost-neo" href="/api/projects" target="_blank" rel="noreferrer">@L["Inspect Projects API"]</a>
+</section>

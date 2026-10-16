@@ -1,0 +1,29 @@
+@model XuanNha.Dev.Dtos.Messages.ContactMessageDto
+
+@{
+    ViewData["Title"] = "Message";
+}
+
+<section class="admin-page-heading">
+    <div>
+        <p class="section-kicker">Inbox</p>
+        <h1>@Model.Subject</h1>
+    </div>
+    <a class="btn-ghost-neo" asp-area="Admin" asp-controller="Messages" asp-action="Index">Back to inbox</a>
+</section>
+
+<section class="admin-table-wrap">
+    <p>
+        <strong>@Model.FullName</strong>
+        &lt;<a href="mailto:@Model.Email">@Model.Email</a>&gt;
+        <br />
+        <span>Received @Model.CreatedAt.ToString("yyyy-MM-dd HH:mm")</span>
+    </p>
+
+    <p style="white-space: pre-wrap;">@Model.Content</p>
+
+    <div class="admin-heading-actions">
+        <a class="btn-primary-neo" href="mailto:@Model.Email?subject=Re: @Model.Subject">Reply by Email</a>
+        <a class="danger-link" asp-area="Admin" asp-controller="Messages" asp-action="Delete" asp-route-id="@Model.Id">Delete</a>
+    </div>
+</section>

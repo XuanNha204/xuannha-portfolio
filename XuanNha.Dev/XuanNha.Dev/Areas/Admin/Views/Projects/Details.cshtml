@@ -1,0 +1,62 @@
+@model ProjectDetailDto
+
+@{
+    ViewData["Title"] = "Project Details";
+}
+
+<section class="admin-page-heading">
+    <div>
+        <p class="section-kicker">Project CMS</p>
+        <h1>@Model.Title</h1>
+    </div>
+    <div class="admin-heading-actions">
+        <a class="btn-ghost-neo" asp-area="Admin" asp-controller="Projects" asp-action="Index">Back</a>
+        <a class="btn-primary-neo" asp-area="Admin" asp-controller="Projects" asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
+    </div>
+</section>
+
+@if (TempData["AdminSuccess"] is string message)
+{
+    <div class="admin-alert">@message</div>
+}
+
+<section class="admin-detail-grid">
+    <div>
+        <span>Slug</span>
+        <strong>@Model.Slug</strong>
+    </div>
+    <div>
+        <span>Status</span>
+        <strong>@Model.Status</strong>
+    </div>
+    <div>
+        <span>Featured</span>
+        <strong>@(Model.Featured ? "Yes" : "No")</strong>
+    </div>
+    <div>
+        <span>Published</span>
+        <strong>@(Model.PublishedAt?.ToString("yyyy-MM-dd HH:mm") ?? "-")</strong>
+    </div>
+</section>
+
+<section class="admin-read-panel">
+    <h2>Summary</h2>
+    <p>@Model.Summary</p>
+    <h2>Description</h2>
+    <p>@Model.Description</p>
+    <h2>Technology Stack</h2>
+    <p>@Model.TechnologyStack</p>
+</section>
+
+@if (Model.Images.Any())
+{
+    <section class="admin-read-panel">
+        <h2>Gallery</h2>
+        <ul class="admin-link-list">
+            @foreach (var image in Model.Images)
+            {
+                <li><a href="@image.ImageUrl" target="_blank" rel="noreferrer">@image.ImageUrl</a></li>
+            }
+        </ul>
+    </section>
+}

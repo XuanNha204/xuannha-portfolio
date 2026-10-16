@@ -1,0 +1,75 @@
+@using System.Globalization
+@{
+    var currentCulture = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+    var returnUrl = Context.Request.Path + Context.Request.QueryString;
+    var title = ViewData["Title"]?.ToString() ?? "Admin";
+}
+<!DOCTYPE html>
+<html lang="@currentCulture">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@L[title] - XuanNha.Dev Admin</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body class="admin-body">
+    <div class="admin-shell">
+        <aside class="admin-sidebar">
+            <a class="admin-brand" asp-area="Admin" asp-controller="Dashboard" asp-action="Index">
+                XuanNha.Dev
+                <span>@L["CMS Studio"]</span>
+            </a>
+            <nav class="admin-menu" aria-label="Admin navigation">
+                <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index">@L["Dashboard"]</a>
+                <a asp-area="Admin" asp-controller="Projects" asp-action="Index">@L["Projects"]</a>
+                <a asp-area="Admin" asp-controller="Blogs" asp-action="Index">@L["Blog"]</a>
+                <a asp-area="Admin" asp-controller="Categories" asp-action="Index">@L["Categories"]</a>
+                <a asp-area="Admin" asp-controller="Tags" asp-action="Index">@L["Tags"]</a>
+                <a asp-area="Admin" asp-controller="Media" asp-action="Index">@L["Media"]</a>
+                <a asp-area="Admin" asp-controller="Messages" asp-action="Index">@L["Messages"]</a>
+                <a asp-area="Admin" asp-controller="Profile" asp-action="Edit">@L["Profile"]</a>
+                <a asp-area="Admin" asp-controller="Skills" asp-action="Index">@L["Skills"]</a>
+                <a asp-area="Admin" asp-controller="Experiences" asp-action="Index">@L["Experience"]</a>
+                <a asp-area="Admin" asp-controller="Education" asp-action="Index">@L["Education"]</a>
+                <a asp-area="Admin" asp-controller="Certificates" asp-action="Index">@L["Certificates"]</a>
+                <a asp-area="Admin" asp-controller="SocialLinks" asp-action="Index">@L["Social Links"]</a>
+                <a href="/">@L["Public Site"]</a>
+            </nav>
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                <form asp-area="Admin" asp-controller="Auth" asp-action="Logout" method="post" class="admin-logout">
+                    @Html.AntiForgeryToken()
+                    <button type="submit">@L["Sign Out"]</button>
+                </form>
+            }
+        </aside>
+        <div class="admin-main">
+            <header class="admin-topbar">
+                <div>
+                    <span>@L["Admin Dashboard"]</span>
+                    <strong>@L[title]</strong>
+                </div>
+                <div class="admin-topbar-actions">
+                    <form asp-area="" asp-controller="Language" asp-action="SetLanguage" method="post" class="lang-switch admin-lang-switch">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="returnUrl" value="@returnUrl" />
+                        <select name="culture" aria-label="@L["Language"]" onchange="this.form.submit()">
+                            <option value="en" selected="@(currentCulture == "en")">English</option>
+                            <option value="vi" selected="@(currentCulture == "vi")">Ti&#7871;ng Vi&#7879;t Nam</option>
+                            <option value="zh" selected="@(currentCulture == "zh")">&#20013;&#25991;</option>
+                        </select>
+                    </form>
+                    <a href="/" target="_blank" rel="noreferrer">@L["Open site"]</a>
+                </div>
+            </header>
+            <main class="admin-content">
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

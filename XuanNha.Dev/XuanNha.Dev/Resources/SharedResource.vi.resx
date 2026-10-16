@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+
+  <!-- Navigation & footer -->
+  <data name="Home" xml:space="preserve"><value>Trang chủ</value></data>
+  <data name="Projects" xml:space="preserve"><value>Dự án</value></data>
+  <data name="Blog" xml:space="preserve"><value>Blog</value></data>
+  <data name="About" xml:space="preserve"><value>Giới thiệu</value></data>
+  <data name="Contact" xml:space="preserve"><value>Liên hệ</value></data>
+  <data name="Privacy" xml:space="preserve"><value>Quyền riêng tư</value></data>
+
+  <!-- Shared -->
+  <data name="Search" xml:space="preserve"><value>Tìm kiếm</value></data>
+  <data name="Previous" xml:space="preserve"><value>Trước</value></data>
+  <data name="Next" xml:space="preserve"><value>Sau</value></data>
+  <data name="Page {0} of {1}" xml:space="preserve"><value>Trang {0} / {1}</value></data>
+  <data name="Present" xml:space="preserve"><value>Hiện tại</value></data>
+
+  <!-- Projects -->
+  <data name="Portfolio" xml:space="preserve"><value>Hồ sơ dự án</value></data>
+  <data name="Search projects" xml:space="preserve"><value>Tìm kiếm dự án</value></data>
+  <data name="No published projects yet. Check back soon." xml:space="preserve"><value>Chưa có dự án nào được xuất bản. Hãy quay lại sau.</value></data>
+  <data name="View case study" xml:space="preserve"><value>Xem chi tiết</value></data>
+  <data name="Case Study" xml:space="preserve"><value>Chi tiết dự án</value></data>
+  <data name="Live Demo" xml:space="preserve"><value>Bản demo</value></data>
+  <data name="Overview" xml:space="preserve"><value>Tổng quan</value></data>
+  <data name="Challenges" xml:space="preserve"><value>Thách thức</value></data>
+  <data name="Solutions" xml:space="preserve"><value>Giải pháp</value></data>
+  <data name="Results" xml:space="preserve"><value>Kết quả</value></data>
+  <data name="Gallery" xml:space="preserve"><value>Thư viện ảnh</value></data>
+  <data name="Stack" xml:space="preserve"><value>Công nghệ</value></data>
+  <data name="Role" xml:space="preserve"><value>Vai trò</value></data>
+  <data name="Published" xml:space="preserve"><value>Xuất bản</value></data>
+  <data name="All projects" xml:space="preserve"><value>Tất cả dự án</value></data>
+
+  <!-- Blog -->
+  <data name="Writing" xml:space="preserve"><value>Bài viết</value></data>
+  <data name="Search articles" xml:space="preserve"><value>Tìm kiếm bài viết</value></data>
+  <data name="No published articles yet. Check back soon." xml:space="preserve"><value>Chưa có bài viết nào được xuất bản. Hãy quay lại sau.</value></data>
+  <data name="Article" xml:space="preserve"><value>Bài viết</value></data>
+  <data name="{0} min read" xml:space="preserve"><value>{0} phút đọc</value></data>
+  <data name="All articles" xml:space="preserve"><value>Tất cả bài viết</value></data>
+
+  <!-- About -->
+  <data name="Coming soon" xml:space="preserve"><value>Sắp ra mắt</value></data>
+  <data name="This page is being written." xml:space="preserve"><value>Trang này đang được hoàn thiện.</value></data>
+  <data name="Profile details will appear here once they are added in the Admin dashboard (Profile, Skills, Experience, Education, Certificates, Social Links)." xml:space="preserve"><value>Thông tin hồ sơ sẽ hiển thị tại đây sau khi được thêm trong trang quản trị (Hồ sơ, Kỹ năng, Kinh nghiệm, Học vấn, Chứng chỉ, Mạng xã hội).</value></data>
+  <data name="Intro" xml:space="preserve"><value>Giới thiệu</value></data>
+  <data name="About me" xml:space="preserve"><value>Về tôi</value></data>
+  <data name="Toolbox" xml:space="preserve"><value>Bộ kỹ năng</value></data>
+  <data name="Skills" xml:space="preserve"><value>Kỹ năng</value></data>
+  <data name="Career" xml:space="preserve"><value>Sự nghiệp</value></data>
+  <data name="Experience" xml:space="preserve"><value>Kinh nghiệm</value></data>
+  <data name="Learning" xml:space="preserve"><value>Học tập</value></data>
+  <data name="Education" xml:space="preserve"><value>Học vấn</value></data>
+  <data name="Credentials" xml:space="preserve"><value>Chứng nhận</value></data>
+  <data name="Certificates" xml:space="preserve"><value>Chứng chỉ</value></data>
+  <data name="General" xml:space="preserve"><value>Chung</value></data>
+  <data name="Download CV" xml:space="preserve"><value>Tải CV</value></data>
+  <data name="Get in touch" xml:space="preserve"><value>Liên hệ với tôi</value></data>
+
+  <!-- Contact -->
+  <data name="Let's build something together." xml:space="preserve"><value>Hãy cùng nhau xây dựng điều gì đó.</value></data>
+  <data name="Full name" xml:space="preserve"><value>Họ và tên</value></data>
+  <data name="Email" xml:space="preserve"><value>Email</value></data>
+  <data name="Subject" xml:space="preserve"><value>Tiêu đề</value></data>
+  <data name="Message" xml:space="preserve"><value>Nội dung</value></data>
+  <data name="Send Message" xml:space="preserve"><value>Gửi tin nhắn</value></data>
+  <data name="Direct" xml:space="preserve"><value>Trực tiếp</value></data>
+  <data name="Prefer email?" xml:space="preserve"><value>Muốn gửi email trực tiếp?</value></data>
+  <data name="Reach me directly and I will reply within 1-2 business days." xml:space="preserve"><value>Liên hệ trực tiếp với tôi, tôi sẽ phản hồi trong 1–2 ngày làm việc.</value></data>
+  <data name="Thanks for reaching out! I will get back to you soon." xml:space="preserve"><value>Cảm ơn bạn đã liên hệ! Tôi sẽ phản hồi sớm nhất có thể.</value></data>
+  <!-- Admin -->
+  <data name="CMS Studio" xml:space="preserve"><value>Trung t&#226;m CMS</value></data>
+  <data name="Dashboard" xml:space="preserve"><value>B&#7843;ng &#273;i&#7873;u khi&#7875;n</value></data>
+  <data name="Categories" xml:space="preserve"><value>Danh m&#7909;c</value></data>
+  <data name="Tags" xml:space="preserve"><value>Th&#7867;</value></data>
+  <data name="Media" xml:space="preserve"><value>Th&#432; vi&#7879;n media</value></data>
+  <data name="Messages" xml:space="preserve"><value>Tin nh&#7855;n</value></data>
+  <data name="Profile" xml:space="preserve"><value>H&#7891; s&#417;</value></data>
+  <data name="Social Links" xml:space="preserve"><value>Li&#234;n k&#7871;t x&#227; h&#7897;i</value></data>
+  <data name="Public Site" xml:space="preserve"><value>Trang c&#244;ng khai</value></data>
+  <data name="Sign Out" xml:space="preserve"><value>&#272;&#259;ng xu&#7845;t</value></data>
+  <data name="Admin Dashboard" xml:space="preserve"><value>Qu&#7843;n tr&#7883; h&#7879; th&#7889;ng</value></data>
+  <data name="Open site" xml:space="preserve"><value>M&#7903; website</value></data>
+  <data name="Language" xml:space="preserve"><value>Ng&#244;n ng&#7919;</value></data>
+  <data name="Sign In" xml:space="preserve"><value>&#272;&#259;ng nh&#7853;p</value></data>
+  <data name="Secure CMS Access" xml:space="preserve"><value>Truy c&#7853;p CMS an to&#224;n</value></data>
+  <data name="Manage portfolio content from one focused studio." xml:space="preserve"><value>Qu&#7843;n l&#253; n&#7897;i dung portfolio t&#7915; m&#7897;t trung t&#226;m t&#7853;p trung.</value></data>
+  <data name="Sign in to maintain projects, blog posts, media, settings, and dashboard content backed by SQL Server." xml:space="preserve"><value>&#272;&#259;ng nh&#7853;p &#273;&#7875; qu&#7843;n l&#253; d&#7921; &#225;n, b&#224;i vi&#7871;t, media, c&#224;i &#273;&#7863;t v&#224; n&#7897;i dung dashboard &#273;&#432;&#7907;c l&#432;u trong SQL Server.</value></data>
+  <data name="Keep me signed in" xml:space="preserve"><value>Ghi nh&#7899; &#273;&#259;ng nh&#7853;p</value></data>
+  <data name="Development admin" xml:space="preserve"><value>T&#224;i kho&#7843;n admin dev</value></data>
+  <data name="Operational Snapshot" xml:space="preserve"><value>T&#7893;ng quan v&#7853;n h&#224;nh</value></data>
+  <data name="Content system status" xml:space="preserve"><value>Tr&#7841;ng th&#225;i h&#7879; th&#7889;ng n&#7897;i dung</value></data>
+  <data name="Total Projects" xml:space="preserve"><value>T&#7893;ng s&#7889; d&#7921; &#225;n</value></data>
+  <data name="Published Projects" xml:space="preserve"><value>D&#7921; &#225;n &#273;&#227; xu&#7845;t b&#7843;n</value></data>
+  <data name="Blog Posts" xml:space="preserve"><value>B&#224;i vi&#7871;t blog</value></data>
+  <data name="Unread Messages" xml:space="preserve"><value>Tin nh&#7855;n ch&#432;a &#273;&#7885;c</value></data>
+  <data name="Media Files" xml:space="preserve"><value>T&#7879;p media</value></data>
+  <data name="Next modules" xml:space="preserve"><value>Module ti&#7871;p theo</value></data>
+  <data name="Project CRUD UI, Blog editor, Media Manager, Profile settings, and Contact inbox are ready to be layered on top of the database and API foundation." xml:space="preserve"><value>Giao di&#7879;n CRUD d&#7921; &#225;n, tr&#236;nh so&#7841;n blog, qu&#7843;n l&#253; media, c&#224;i &#273;&#7863;t h&#7891; s&#417; v&#224; h&#7897;p th&#432; li&#234;n h&#7879; &#273;&#227; s&#7861;n s&#224;ng &#273;&#7875; ph&#225;t tri&#7875;n tr&#234;n n&#7873;n database v&#224; API.</value></data>
+  <data name="Inspect Projects API" xml:space="preserve"><value>Ki&#7875;m tra Projects API</value></data>
+</root>

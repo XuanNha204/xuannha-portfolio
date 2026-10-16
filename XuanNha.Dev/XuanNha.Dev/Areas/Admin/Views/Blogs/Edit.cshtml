@@ -1,0 +1,27 @@
+@model BlogFormViewModel
+
+@{
+    ViewData["Title"] = "Edit Blog Post";
+}
+
+<section class="admin-page-heading">
+    <div>
+        <p class="section-kicker">Blog CMS</p>
+        <h1>Edit post</h1>
+    </div>
+    <a class="btn-ghost-neo" asp-area="Admin" asp-controller="Blogs" asp-action="Details" asp-route-id="@Model.Id">View Post</a>
+</section>
+
+<form asp-area="Admin" asp-controller="Blogs" asp-action="Edit" asp-route-id="@Model.Id" method="post" class="admin-editor-form">
+    @Html.AntiForgeryToken()
+    <input asp-for="Id" type="hidden" />
+    <partial name="_BlogForm" model="Model" />
+    <div class="admin-form-actions">
+        <button type="submit" class="btn-primary-neo">Save Changes</button>
+        <a class="btn-ghost-neo" asp-area="Admin" asp-controller="Blogs" asp-action="Index">Cancel</a>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

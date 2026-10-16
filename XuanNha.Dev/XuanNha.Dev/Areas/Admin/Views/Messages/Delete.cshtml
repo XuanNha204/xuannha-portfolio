@@ -1,0 +1,24 @@
+@model XuanNha.Dev.Dtos.Messages.ContactMessageDto
+
+@{
+    ViewData["Title"] = "Delete Message";
+}
+
+<section class="admin-page-heading">
+    <div>
+        <p class="section-kicker">Inbox</p>
+        <h1>Delete message</h1>
+    </div>
+    <a class="btn-ghost-neo" asp-area="Admin" asp-controller="Messages" asp-action="Index">Back to inbox</a>
+</section>
+
+<section class="admin-table-wrap">
+    <p>
+        Delete the message <strong>@Model.Subject</strong> from <strong>@Model.FullName</strong> (@Model.Email)?
+        This action cannot be undone.
+    </p>
+
+    <form asp-area="Admin" asp-controller="Messages" asp-action="Delete" asp-route-id="@Model.Id" method="post" class="admin-form">
+        <button type="submit" class="btn-primary-neo">Confirm Delete</button>
+    </form>
+</section>

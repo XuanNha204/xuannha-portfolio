@@ -1,0 +1,18 @@
+@model EducationFormViewModel
+
+@{
+    ViewData["Title"] = "New Education";
+}
+
+<section class="admin-page-heading">
+    <div>
+        <p class="section-kicker">About Page</p>
+        <h1>New education entry</h1>
+    </div>
+    <a class="btn-ghost-neo" asp-area="Admin" asp-controller="Education" asp-action="Index">Back to list</a>
+</section>
+
+<form asp-area="Admin" asp-controller="Education" asp-action="Create" method="post" class="admin-form">
+    <partial name="_EducationForm" model="Model" />
+    <button type="submit" class="btn-primary-neo">Create Entry</button>
+</form>

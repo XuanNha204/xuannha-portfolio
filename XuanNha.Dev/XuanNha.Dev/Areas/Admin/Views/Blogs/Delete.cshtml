@@ -1,0 +1,18 @@
+@model BlogDetailDto
+
+@{
+    ViewData["Title"] = "Delete Blog Post";
+}
+
+<section class="admin-empty-state danger-state">
+    <p class="section-kicker">Delete blog post</p>
+    <h1>@Model.Title</h1>
+    <p>
+        This will permanently remove the blog post from the database.
+    </p>
+    <form asp-area="Admin" asp-controller="Blogs" asp-action="Delete" asp-route-id="@Model.Id" method="post" class="admin-form-actions">
+        @Html.AntiForgeryToken()
+        <button type="submit" class="danger-button">Delete Post</button>
+        <a class="btn-ghost-neo" asp-area="Admin" asp-controller="Blogs" asp-action="Details" asp-route-id="@Model.Id">Cancel</a>
+    </form>
+</section>

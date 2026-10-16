@@ -1,0 +1,142 @@
+@model MediaIndexViewModel
+
+@{
+    ViewData["Title"] = "Media";
+}
+
+<section class="admin-page-heading">
+    <div>
+        <p class="section-kicker">Media Manager</p>
+        <h1>Media library</h1>
+    </div>
+</section>
+
+@if (TempData["AdminSuccess"] is string message)
+{
+    <div class="admin-alert">@message</div>
+}
+
+@if (TempData["AdminError"] is string errorMessage)
+{
+    <div class="admin-alert admin-alert-error">@errorMessage</div>
+}
+
+<form asp-area="Admin" asp-controller="Media" asp-action="Upload" method="post" enctype="multipart/form-data" class="admin-filter-bar">
+    <input type="file" name="files" multiple
+           accept=".jpg,.jpeg,.png,.gif,.webp,.svg,.mp4,.webm,.pdf,.doc,.docx,.txt" />
+    <button type="submit" class="btn-primary-neo">Upload</button>
+</form>
+
+<form asp-area="Admin" asp-controller="Media" asp-action="Index" method="get" class="admin-filter-bar">
+    <input asp-for="Query.Search" name="Search" placeholder="Search file name" />
+    <select asp-for="Query.FileType" name="FileType" asp-items="Html.GetEnumSelectList<MediaFileType>()">
+        <option value="">All types</option>
+    </select>
+    <button type="submit" class="btn-ghost-neo">Filter</button>
+</form>
+
+<section class="admin-table-wrap">
+    @if (!Model.MediaFiles.Items.Any())
+    {
+        <div class="admin-empty-state">
+            <p class="section-kicker">No media yet</p>
+            <h1>Upload the first file.</h1>
+        </div>
+    }
+    else
+    {
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Preview</th>
+                    <th>File</th>
+                    <th>Type</th>
+                    <th>Size</th>
+                    <th>Uploaded</th>
+                    <th class="admin-table-actions">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var file in Model.MediaFiles.Items)
+                {
+                    <tr>
+                        <td>
+                            @if (file.FileType == MediaFileType.Image)
+                            {
+                                <img src="@file.Url" alt="@file.OriginalFileName" style="width:56px;height:56px;object-fit:cover;border-radius:8px;" loading="lazy" />
+                            }
+                            else
+                            {
+                                <span class="admin-pill">@file.FileType</span>
+                            }
+                        </td>
+                        <td>
+                            <strong>@file.OriginalFileName</strong>
+                            <span>@file.Url</span>
+                        </td>
+                        <td>@file.FileType</td>
+                        <td>@FormatSize(file.SizeInBytes)</td>
+                        <td>@file.CreatedAt.ToString("yyyy-MM-dd")</td>
+                        <td class="admin-row-actions">
+                            <a href="@file.Url" target="_blank" rel="noreferrer">Open</a>
+                            <button type="button" class="btn-copy-url" data-url="@file.Url">Copy URL</button>
+                            <form asp-area="Admin" asp-controller="Media" asp-action="Delete" method="post">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@file.Id" />
+                                <button type="submit" class="danger-link">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <div class="admin-pagination">
+            <span>Page @Model.MediaFiles.PageNumber of @Model.MediaFiles.TotalPages</span>
+            <div>
+                @if (Model.MediaFiles.HasPreviousPage)
+                {
+                    <a asp-area="Admin" asp-controller="Media" asp-action="Index"
+                       asp-route-Search="@Model.Query.Search"
+                       asp-route-FileType="@Model.Query.FileType"
+                       asp-route-PageNumber="@(Model.MediaFiles.PageNumber - 1)"
+                       asp-route-PageSize="@Model.MediaFiles.PageSize">Previous</a>
+                }
+                @if (Model.MediaFiles.HasNextPage)
+                {
+                    <a asp-area="Admin" asp-controller="Media" asp-action="Index"
+                       asp-route-Search="@Model.Query.Search"
+                       asp-route-FileType="@Model.Query.FileType"
+                       asp-route-PageNumber="@(Model.MediaFiles.PageNumber + 1)"
+                       asp-route-PageSize="@Model.MediaFiles.PageSize">Next</a>
+                }
+            </div>
+        </div>
+    }
+</section>
+
+@functions {
+    private static string FormatSize(long bytes)
+    {
+        return bytes switch
+        {
+            >= 1024 * 1024 => $"{bytes / (1024.0 * 1024.0):0.#} MB",
+            >= 1024 => $"{bytes / 1024.0:0.#} KB",
+            _ => $"{bytes} B"
+        };
+    }
+}
+
+@section Scripts {
+    <script>
+        document.querySelectorAll(".btn-copy-url").forEach(function (button) {
+            button.addEventListener("click", function () {
+                var url = window.location.origin + button.dataset.url;
+                navigator.clipboard.writeText(url).then(function () {
+                    button.textContent = "Copied!";
+                    setTimeout(function () { button.textContent = "Copy URL"; }, 1500);
+                });
+            });
+        });
+    </script>
+}

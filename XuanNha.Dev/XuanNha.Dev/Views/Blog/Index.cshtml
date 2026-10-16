@@ -1,0 +1,67 @@
+@model BlogListViewModel
+
+@{
+    ViewData["Title"] = L["Blog"].Value;
+    ViewData["Description"] = "Technical articles on .NET, web development, and vibe coding by Huỳnh Xuân Nhã.";
+}
+
+<section class="content-band">
+    <div class="container-xl">
+        <div class="section-heading-row">
+            <div>
+                <p class="section-kicker">@L["Writing"]</p>
+                <h1>@L["Blog"]</h1>
+            </div>
+            <form asp-controller="Blog" asp-action="Index" method="get" class="d-flex gap-2">
+                <input class="form-control" type="search" name="search" value="@Model.Search" placeholder="@L["Search articles"].Value" />
+                <button type="submit" class="btn-ghost-neo">@L["Search"]</button>
+            </form>
+        </div>
+
+        @if (!Model.BlogPosts.Items.Any())
+        {
+            <p>@L["No published articles yet. Check back soon."]</p>
+        }
+        else
+        {
+            <div class="work-grid work-grid-horizontal drag-scroll">
+                @foreach (var post in Model.BlogPosts.Items)
+                {
+                    <article class="work-card">
+                        @if (!string.IsNullOrEmpty(post.CoverImageUrl))
+                        {
+                            <img src="@post.CoverImageUrl" alt="@post.Title" style="width:100%;border-radius:12px;aspect-ratio:16/9;object-fit:cover;" loading="lazy" />
+                        }
+                        <p class="section-kicker">
+                            @(post.CategoryName ?? L["Article"].Value) · @L["{0} min read", post.ReadingTimeMinutes]
+                        </p>
+                        <h3>
+                            <a asp-controller="Blog" asp-action="Details" asp-route-slug="@post.Slug">@post.Title</a>
+                        </h3>
+                        <p>@post.Summary</p>
+                        <span>@(post.PublishedAt?.ToString("yyyy-MM-dd") ?? "")</span>
+                    </article>
+                }
+            </div>
+
+            @if (Model.BlogPosts.TotalPages > 1)
+            {
+                <nav class="d-flex gap-3 mt-4" aria-label="Blog pages">
+                    @if (Model.BlogPosts.HasPreviousPage)
+                    {
+                        <a class="btn-ghost-neo" asp-controller="Blog" asp-action="Index"
+                           asp-route-search="@Model.Search"
+                           asp-route-pageNumber="@(Model.BlogPosts.PageNumber - 1)">@L["Previous"]</a>
+                    }
+                    <span class="align-self-center">@L["Page {0} of {1}", Model.BlogPosts.PageNumber, Model.BlogPosts.TotalPages]</span>
+                    @if (Model.BlogPosts.HasNextPage)
+                    {
+                        <a class="btn-ghost-neo" asp-controller="Blog" asp-action="Index"
+                           asp-route-search="@Model.Search"
+                           asp-route-pageNumber="@(Model.BlogPosts.PageNumber + 1)">@L["Next"]</a>
+                    }
+                </nav>
+            }
+        }
+    </div>
+</section>

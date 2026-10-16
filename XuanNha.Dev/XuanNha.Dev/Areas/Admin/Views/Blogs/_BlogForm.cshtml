@@ -1,0 +1,55 @@
+@model BlogFormViewModel
+
+<div asp-validation-summary="ModelOnly" class="text-danger admin-validation"></div>
+
+<div class="admin-form-grid">
+    <label>
+        Title
+        <input asp-for="Title" />
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </label>
+
+    <label>
+        Slug
+        <input asp-for="Slug" placeholder="Leave empty to auto-generate" />
+        <span asp-validation-for="Slug" class="text-danger"></span>
+    </label>
+
+    <label class="span-2">
+        Summary
+        <textarea asp-for="Summary" rows="3"></textarea>
+        <span asp-validation-for="Summary" class="text-danger"></span>
+    </label>
+
+    <label>
+        Cover Image URL
+        <input asp-for="CoverImageUrl" />
+        <span asp-validation-for="CoverImageUrl" class="text-danger"></span>
+    </label>
+
+    <label>
+        Category
+        <select asp-for="CategoryId" asp-items="ViewBag.CategoryOptions as SelectList">
+            <option value="">No category</option>
+        </select>
+        <span asp-validation-for="CategoryId" class="text-danger"></span>
+    </label>
+
+    <label>
+        Status
+        <select asp-for="Status" asp-items="Html.GetEnumSelectList<BlogPostStatus>()"></select>
+        <span asp-validation-for="Status" class="text-danger"></span>
+    </label>
+
+    <label>
+        Published At
+        <input asp-for="PublishedAt" placeholder="2026-07-06T14:30:00+07:00" />
+        <span asp-validation-for="PublishedAt" class="text-danger"></span>
+    </label>
+
+    <label class="span-2">
+        Markdown Content
+        <textarea asp-for="ContentMarkdown" rows="16" class="markdown-editor"></textarea>
+        <span asp-validation-for="ContentMarkdown" class="text-danger"></span>
+    </label>
+</div>

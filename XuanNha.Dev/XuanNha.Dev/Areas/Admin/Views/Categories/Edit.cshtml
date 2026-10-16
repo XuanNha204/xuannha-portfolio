@@ -1,0 +1,19 @@
+@model CategoryFormViewModel
+
+@{
+    ViewData["Title"] = "Edit Category";
+}
+
+<section class="admin-page-heading">
+    <div>
+        <p class="section-kicker">Taxonomy</p>
+        <h1>Edit category</h1>
+    </div>
+    <a class="btn-ghost-neo" asp-area="Admin" asp-controller="Categories" asp-action="Index">Back to list</a>
+</section>
+
+<form asp-area="Admin" asp-controller="Categories" asp-action="Edit" asp-route-id="@Model.Id" method="post" class="admin-form">
+    <input type="hidden" asp-for="Id" />
+    <partial name="_CategoryForm" model="Model" />
+    <button type="submit" class="btn-primary-neo">Save Changes</button>
+</form>

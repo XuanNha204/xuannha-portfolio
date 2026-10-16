@@ -1,0 +1,87 @@
+@model ProjectDetailDto
+
+@{
+    ViewData["Title"] = Model.Title;
+    ViewData["Description"] = Model.Summary;
+    ViewData["OgImage"] = Model.ThumbnailUrl;
+}
+
+<section class="content-band">
+    <div class="container-xl">
+        <p class="section-kicker">@L["Case Study"]</p>
+        <h1>@Model.Title</h1>
+        <p class="hero-lead">@Model.Summary</p>
+
+        <div class="d-flex flex-wrap gap-2 mb-4">
+            @if (!string.IsNullOrEmpty(Model.GithubUrl))
+            {
+                <a class="btn-ghost-neo" href="@Model.GithubUrl" target="_blank" rel="noreferrer">GitHub</a>
+            }
+            @if (!string.IsNullOrEmpty(Model.DemoUrl))
+            {
+                <a class="btn-primary-neo" href="@Model.DemoUrl" target="_blank" rel="noreferrer">@L["Live Demo"]</a>
+            }
+        </div>
+
+        @if (!string.IsNullOrEmpty(Model.ThumbnailUrl))
+        {
+            <img src="@Model.ThumbnailUrl" alt="@Model.Title" style="width:100%;max-height:480px;object-fit:cover;border-radius:16px;" class="mb-4" />
+        }
+
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <h2>@L["Overview"]</h2>
+                <p style="white-space: pre-wrap;">@Model.Description</p>
+
+                @if (!string.IsNullOrEmpty(Model.Challenges))
+                {
+                    <h2>@L["Challenges"]</h2>
+                    <p style="white-space: pre-wrap;">@Model.Challenges</p>
+                }
+
+                @if (!string.IsNullOrEmpty(Model.Solutions))
+                {
+                    <h2>@L["Solutions"]</h2>
+                    <p style="white-space: pre-wrap;">@Model.Solutions</p>
+                }
+
+                @if (!string.IsNullOrEmpty(Model.Results))
+                {
+                    <h2>@L["Results"]</h2>
+                    <p style="white-space: pre-wrap;">@Model.Results</p>
+                }
+
+                @if (Model.Images.Any())
+                {
+                    <h2>@L["Gallery"]</h2>
+                    <div class="row g-3">
+                        @foreach (var image in Model.Images)
+                        {
+                            <div class="col-md-6">
+                                <img src="@image.ImageUrl" alt="@(image.AltText ?? Model.Title)" style="width:100%;border-radius:12px;" loading="lazy" />
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+            <div class="col-lg-4">
+                <div class="work-card">
+                    <p class="section-kicker">@L["Stack"]</p>
+                    <p>@Model.TechnologyStack</p>
+                    @if (!string.IsNullOrEmpty(Model.Role))
+                    {
+                        <p class="section-kicker">@L["Role"]</p>
+                        <p>@Model.Role</p>
+                    }
+                    @if (Model.PublishedAt.HasValue)
+                    {
+                        <p class="section-kicker">@L["Published"]</p>
+                        <p>@Model.PublishedAt.Value.ToString("MMMM yyyy")</p>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <a class="btn-ghost-neo mt-4 d-inline-block" asp-controller="Projects" asp-action="Index">← @L["All projects"]</a>
+    </div>
+</section>

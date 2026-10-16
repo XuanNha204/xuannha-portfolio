@@ -1,0 +1,19 @@
+@model SocialLinkFormViewModel
+
+@{
+    ViewData["Title"] = "Edit Social Link";
+}
+
+<section class="admin-page-heading">
+    <div>
+        <p class="section-kicker">About Page</p>
+        <h1>Edit social link</h1>
+    </div>
+    <a class="btn-ghost-neo" asp-area="Admin" asp-controller="SocialLinks" asp-action="Index">Back to list</a>
+</section>
+
+<form asp-area="Admin" asp-controller="SocialLinks" asp-action="Edit" asp-route-id="@Model.Id" method="post" class="admin-form">
+    <input type="hidden" asp-for="Id" />
+    <partial name="_SocialLinkForm" model="Model" />
+    <button type="submit" class="btn-primary-neo">Save Changes</button>
+</form>

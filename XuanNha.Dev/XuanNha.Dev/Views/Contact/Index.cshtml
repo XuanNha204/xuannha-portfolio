@@ -1,0 +1,77 @@
+@model ContactFormViewModel
+
+@{
+    ViewData["Title"] = L["Contact"].Value;
+    ViewData["Description"] = "Get in touch with Huỳnh Xuân Nhã — freelance projects, collaboration, or just to say hi.";
+}
+
+<section class="content-band">
+    <div class="container-xl">
+        <div class="section-heading-row">
+            <div>
+                <p class="section-kicker">@L["Contact"]</p>
+                <h1>@L["Let's build something together."]</h1>
+            </div>
+        </div>
+
+        @if (TempData["ContactSuccess"] is string successMessage)
+        {
+            <div class="alert alert-success" role="alert">@successMessage</div>
+        }
+
+        <div class="row g-4">
+            <div class="col-lg-7">
+                <form asp-controller="Contact" asp-action="Index" method="post" class="admin-form">
+                    <div asp-validation-summary="ModelOnly" class="text-danger admin-validation"></div>
+
+                    <div class="admin-form-grid">
+                        <label>
+                            @L["Full name"]
+                            <input asp-for="FullName" />
+                            <span asp-validation-for="FullName" class="text-danger"></span>
+                        </label>
+
+                        <label>
+                            @L["Email"]
+                            <input asp-for="Email" type="email" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </label>
+
+                        <label class="span-2">
+                            @L["Subject"]
+                            <input asp-for="Subject" />
+                            <span asp-validation-for="Subject" class="text-danger"></span>
+                        </label>
+
+                        <label class="span-2">
+                            @L["Message"]
+                            <textarea asp-for="Content" rows="8"></textarea>
+                            <span asp-validation-for="Content" class="text-danger"></span>
+                        </label>
+
+                        <div class="d-none" aria-hidden="true">
+                            <label>
+                                Website
+                                <input asp-for="Website" autocomplete="off" tabindex="-1" />
+                            </label>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-primary-neo">@L["Send Message"]</button>
+                </form>
+            </div>
+            <div class="col-lg-5">
+                <div class="work-card">
+                    <p class="section-kicker">@L["Direct"]</p>
+                    <h3>@L["Prefer email?"]</h3>
+                    <p>@L["Reach me directly and I will reply within 1-2 business days."]</p>
+                    <a class="btn-ghost-neo" href="mailto:huynhxuannha77@gmail.com">huynhxuannha77@gmail.com</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

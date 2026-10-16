@@ -1,0 +1,35 @@
+@model SkillFormViewModel
+
+<div asp-validation-summary="ModelOnly" class="text-danger admin-validation"></div>
+
+<div class="admin-form-grid">
+    <label>
+        Name
+        <input asp-for="Name" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </label>
+
+    <label>
+        Group
+        <input asp-for="GroupName" placeholder="e.g. Backend, Frontend, Tools" />
+        <span asp-validation-for="GroupName" class="text-danger"></span>
+    </label>
+
+    <label>
+        Level (0–100, 0 hides the bar)
+        <input asp-for="Level" type="number" min="0" max="100" />
+        <span asp-validation-for="Level" class="text-danger"></span>
+    </label>
+
+    <label>
+        Sort order
+        <input asp-for="SortOrder" type="number" />
+        <span asp-validation-for="SortOrder" class="text-danger"></span>
+    </label>
+
+    <label class="span-2">
+        Icon URL
+        <input asp-for="IconUrl" />
+        <span asp-validation-for="IconUrl" class="text-danger"></span>
+    </label>
+</div>

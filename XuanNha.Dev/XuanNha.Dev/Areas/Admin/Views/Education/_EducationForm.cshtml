@@ -1,0 +1,35 @@
+@model EducationFormViewModel
+
+<div asp-validation-summary="ModelOnly" class="text-danger admin-validation"></div>
+
+<div class="admin-form-grid">
+    <label>
+        School
+        <input asp-for="School" />
+        <span asp-validation-for="School" class="text-danger"></span>
+    </label>
+
+    <label>
+        Major
+        <input asp-for="Major" />
+        <span asp-validation-for="Major" class="text-danger"></span>
+    </label>
+
+    <label>
+        Start year
+        <input asp-for="StartYear" type="number" min="1950" max="2100" />
+        <span asp-validation-for="StartYear" class="text-danger"></span>
+    </label>
+
+    <label>
+        End year (empty = present)
+        <input asp-for="EndYear" type="number" min="1950" max="2100" />
+        <span asp-validation-for="EndYear" class="text-danger"></span>
+    </label>
+
+    <label class="span-2">
+        Description
+        <textarea asp-for="Description" rows="4"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </label>
+</div>

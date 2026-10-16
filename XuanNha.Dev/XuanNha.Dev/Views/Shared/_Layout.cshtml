@@ -1,0 +1,121 @@
+@using System.Globalization
+@{
+    var currentCulture = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+    var returnUrl = Context.Request.Path + Context.Request.QueryString;
+}
+<!DOCTYPE html>
+<html lang="@currentCulture">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script>
+        (function () {
+            try {
+                if (localStorage.getItem("theme") === "light") {
+                    document.documentElement.setAttribute("data-theme", "light");
+                }
+            } catch (e) { }
+        })();
+    </script>
+    <title>@ViewData["Title"] - XuanNha.Dev</title>
+    @{
+        var metaDescription = ViewData["Description"] as string
+            ?? "XuanNha.Dev — Vibe Coding Studio. Portfolio, projects, and technical blog by Huỳnh Xuân Nhã.";
+        var requestUrl = $"{Context.Request.Scheme}://{Context.Request.Host}{Context.Request.Path}";
+        var ogImage = ViewData["OgImage"] as string;
+        var ogType = ViewData["OgType"] as string ?? "website";
+    }
+    <meta name="description" content="@metaDescription" />
+    <link rel="canonical" href="@requestUrl" />
+    <meta property="og:site_name" content="XuanNha.Dev" />
+    <meta property="og:type" content="@ogType" />
+    <meta property="og:title" content="@ViewData["Title"] - XuanNha.Dev" />
+    <meta property="og:description" content="@metaDescription" />
+    <meta property="og:url" content="@requestUrl" />
+    @if (!string.IsNullOrEmpty(ogImage))
+    {
+        <meta property="og:image" content="@ogImage" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:image" content="@ogImage" />
+    }
+    else
+    {
+        <meta name="twitter:card" content="summary" />
+    }
+    <meta name="twitter:title" content="@ViewData["Title"] - XuanNha.Dev" />
+    <meta name="twitter:description" content="@metaDescription" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/XuanNha.Dev.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <header class="site-header">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm site-nav">
+            <div class="container-xl">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">XuanNha.Dev</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav ms-auto align-items-sm-center">
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">@L["Home"]</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Projects" asp-action="Index">@L["Projects"]</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Blog" asp-action="Index">@L["Blog"]</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="About" asp-action="Index">@L["About"]</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Contact" asp-action="Index">@L["Contact"]</a>
+                        </li>
+                        <li class="nav-item">
+                            <form asp-controller="Language" asp-action="SetLanguage" method="post" class="lang-switch">
+                                <input type="hidden" name="returnUrl" value="@returnUrl" />
+                                <select name="culture" aria-label="Language" onchange="this.form.submit()">
+                                    <option value="en" selected="@(currentCulture == "en")">English</option>
+                                    <option value="vi" selected="@(currentCulture == "vi")">Tiếng Việt</option>
+                                    <option value="zh" selected="@(currentCulture == "zh")">中文</option>
+                                </select>
+                            </form>
+                        </li>
+                        <li class="nav-item">
+                            <button type="button" id="theme-toggle" class="theme-toggle" aria-label="Toggle dark/light mode">
+                                <span class="theme-icon-dark" aria-hidden="true">☀️</span>
+                                <span class="theme-icon-light" aria-hidden="true">🌙</span>
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="page-shell">
+        <main role="main">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="site-footer">
+        <div class="container-xl footer-grid">
+            <span>&copy; 2026 XuanNha.Dev</span>
+            <a asp-area="" asp-controller="Home" asp-action="Privacy">@L["Privacy"]</a>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/lenis@1.1.9/dist/lenis.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

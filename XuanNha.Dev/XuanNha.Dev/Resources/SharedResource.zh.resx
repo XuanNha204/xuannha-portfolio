@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+
+  <!-- Navigation & footer -->
+  <data name="Home" xml:space="preserve"><value>首页</value></data>
+  <data name="Projects" xml:space="preserve"><value>项目</value></data>
+  <data name="Blog" xml:space="preserve"><value>博客</value></data>
+  <data name="About" xml:space="preserve"><value>关于</value></data>
+  <data name="Contact" xml:space="preserve"><value>联系</value></data>
+  <data name="Privacy" xml:space="preserve"><value>隐私政策</value></data>
+
+  <!-- Shared -->
+  <data name="Search" xml:space="preserve"><value>搜索</value></data>
+  <data name="Previous" xml:space="preserve"><value>上一页</value></data>
+  <data name="Next" xml:space="preserve"><value>下一页</value></data>
+  <data name="Page {0} of {1}" xml:space="preserve"><value>第 {0} 页，共 {1} 页</value></data>
+  <data name="Present" xml:space="preserve"><value>至今</value></data>
+
+  <!-- Projects -->
+  <data name="Portfolio" xml:space="preserve"><value>作品集</value></data>
+  <data name="Search projects" xml:space="preserve"><value>搜索项目</value></data>
+  <data name="No published projects yet. Check back soon." xml:space="preserve"><value>尚未发布任何项目，请稍后再来。</value></data>
+  <data name="View case study" xml:space="preserve"><value>查看案例</value></data>
+  <data name="Case Study" xml:space="preserve"><value>案例研究</value></data>
+  <data name="Live Demo" xml:space="preserve"><value>在线演示</value></data>
+  <data name="Overview" xml:space="preserve"><value>概述</value></data>
+  <data name="Challenges" xml:space="preserve"><value>挑战</value></data>
+  <data name="Solutions" xml:space="preserve"><value>解决方案</value></data>
+  <data name="Results" xml:space="preserve"><value>成果</value></data>
+  <data name="Gallery" xml:space="preserve"><value>图库</value></data>
+  <data name="Stack" xml:space="preserve"><value>技术栈</value></data>
+  <data name="Role" xml:space="preserve"><value>角色</value></data>
+  <data name="Published" xml:space="preserve"><value>发布时间</value></data>
+  <data name="All projects" xml:space="preserve"><value>所有项目</value></data>
+
+  <!-- Blog -->
+  <data name="Writing" xml:space="preserve"><value>写作</value></data>
+  <data name="Search articles" xml:space="preserve"><value>搜索文章</value></data>
+  <data name="No published articles yet. Check back soon." xml:space="preserve"><value>尚未发布任何文章，请稍后再来。</value></data>
+  <data name="Article" xml:space="preserve"><value>文章</value></data>
+  <data name="{0} min read" xml:space="preserve"><value>阅读约 {0} 分钟</value></data>
+  <data name="All articles" xml:space="preserve"><value>所有文章</value></data>
+
+  <!-- About -->
+  <data name="Coming soon" xml:space="preserve"><value>即将上线</value></data>
+  <data name="This page is being written." xml:space="preserve"><value>此页面正在编写中。</value></data>
+  <data name="Profile details will appear here once they are added in the Admin dashboard (Profile, Skills, Experience, Education, Certificates, Social Links)." xml:space="preserve"><value>在后台管理中添加个人资料（简介、技能、经历、教育、证书、社交链接）后，相关信息将显示在此处。</value></data>
+  <data name="Intro" xml:space="preserve"><value>简介</value></data>
+  <data name="About me" xml:space="preserve"><value>关于我</value></data>
+  <data name="Toolbox" xml:space="preserve"><value>技能箱</value></data>
+  <data name="Skills" xml:space="preserve"><value>技能</value></data>
+  <data name="Career" xml:space="preserve"><value>职业</value></data>
+  <data name="Experience" xml:space="preserve"><value>工作经验</value></data>
+  <data name="Learning" xml:space="preserve"><value>学习</value></data>
+  <data name="Education" xml:space="preserve"><value>教育背景</value></data>
+  <data name="Credentials" xml:space="preserve"><value>资质</value></data>
+  <data name="Certificates" xml:space="preserve"><value>证书</value></data>
+  <data name="General" xml:space="preserve"><value>通用</value></data>
+  <data name="Download CV" xml:space="preserve"><value>下载简历</value></data>
+  <data name="Get in touch" xml:space="preserve"><value>联系我</value></data>
+
+  <!-- Contact -->
+  <data name="Let's build something together." xml:space="preserve"><value>让我们一起创造点什么。</value></data>
+  <data name="Full name" xml:space="preserve"><value>姓名</value></data>
+  <data name="Email" xml:space="preserve"><value>邮箱</value></data>
+  <data name="Subject" xml:space="preserve"><value>主题</value></data>
+  <data name="Message" xml:space="preserve"><value>留言内容</value></data>
+  <data name="Send Message" xml:space="preserve"><value>发送留言</value></data>
+  <data name="Direct" xml:space="preserve"><value>直接联系</value></data>
+  <data name="Prefer email?" xml:space="preserve"><value>更喜欢用邮件？</value></data>
+  <data name="Reach me directly and I will reply within 1-2 business days." xml:space="preserve"><value>直接联系我，我会在 1–2 个工作日内回复。</value></data>
+  <data name="Thanks for reaching out! I will get back to you soon." xml:space="preserve"><value>感谢您的来信！我会尽快回复。</value></data>
+
+  <!-- Admin -->
+  <data name="CMS Studio" xml:space="preserve"><value>CMS 工作室</value></data>
+  <data name="Dashboard" xml:space="preserve"><value>仪表盘</value></data>
+  <data name="Categories" xml:space="preserve"><value>分类</value></data>
+  <data name="Tags" xml:space="preserve"><value>标签</value></data>
+  <data name="Media" xml:space="preserve"><value>媒体库</value></data>
+  <data name="Messages" xml:space="preserve"><value>留言</value></data>
+  <data name="Profile" xml:space="preserve"><value>个人资料</value></data>
+  <data name="Social Links" xml:space="preserve"><value>社交链接</value></data>
+  <data name="Public Site" xml:space="preserve"><value>公开网站</value></data>
+  <data name="Sign Out" xml:space="preserve"><value>退出登录</value></data>
+  <data name="Admin Dashboard" xml:space="preserve"><value>后台管理</value></data>
+  <data name="Open site" xml:space="preserve"><value>打开网站</value></data>
+  <data name="Language" xml:space="preserve"><value>语言</value></data>
+  <data name="Sign In" xml:space="preserve"><value>登录</value></data>
+  <data name="Secure CMS Access" xml:space="preserve"><value>安全的 CMS 访问</value></data>
+  <data name="Manage portfolio content from one focused studio." xml:space="preserve"><value>在一个专注的工作台中管理作品集内容。</value></data>
+  <data name="Sign in to maintain projects, blog posts, media, settings, and dashboard content backed by SQL Server." xml:space="preserve"><value>登录以管理存储在 SQL Server 中的项目、博客、媒体、设置和仪表盘内容。</value></data>
+  <data name="Keep me signed in" xml:space="preserve"><value>保持登录状态</value></data>
+  <data name="Development admin" xml:space="preserve"><value>开发管理员账号</value></data>
+  <data name="Operational Snapshot" xml:space="preserve"><value>运营概览</value></data>
+  <data name="Content system status" xml:space="preserve"><value>内容系统状态</value></data>
+  <data name="Total Projects" xml:space="preserve"><value>项目总数</value></data>
+  <data name="Published Projects" xml:space="preserve"><value>已发布项目</value></data>
+  <data name="Blog Posts" xml:space="preserve"><value>博客文章</value></data>
+  <data name="Unread Messages" xml:space="preserve"><value>未读留言</value></data>
+  <data name="Media Files" xml:space="preserve"><value>媒体文件</value></data>
+  <data name="Next modules" xml:space="preserve"><value>后续模块</value></data>
+  <data name="Project CRUD UI, Blog editor, Media Manager, Profile settings, and Contact inbox are ready to be layered on top of the database and API foundation." xml:space="preserve"><value>项目管理界面、博客编辑器、媒体管理、个人资料设置和联系收件箱已准备好在数据库与 API 基础上继续构建。</value></data>
+  <data name="Inspect Projects API" xml:space="preserve"><value>查看 Projects API</value></data>
+</root>

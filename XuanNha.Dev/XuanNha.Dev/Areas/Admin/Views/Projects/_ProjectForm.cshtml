@@ -1,0 +1,106 @@
+@model ProjectFormViewModel
+
+<div asp-validation-summary="ModelOnly" class="text-danger admin-validation"></div>
+
+<div class="admin-form-grid">
+    <label>
+        Title
+        <input asp-for="Title" />
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </label>
+
+    <label>
+        Slug
+        <input asp-for="Slug" placeholder="Leave empty to auto-generate" />
+        <span asp-validation-for="Slug" class="text-danger"></span>
+    </label>
+
+    <label class="span-2">
+        Summary
+        <textarea asp-for="Summary" rows="3"></textarea>
+        <span asp-validation-for="Summary" class="text-danger"></span>
+    </label>
+
+    <label class="span-2">
+        Description
+        <textarea asp-for="Description" rows="7"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </label>
+
+    <label>
+        Thumbnail URL
+        <input asp-for="ThumbnailUrl" />
+        <span asp-validation-for="ThumbnailUrl" class="text-danger"></span>
+    </label>
+
+    <label>
+        Technology Stack
+        <input asp-for="TechnologyStack" placeholder="ASP.NET Core, SQL Server, Three.js" />
+        <span asp-validation-for="TechnologyStack" class="text-danger"></span>
+    </label>
+
+    <label>
+        GitHub URL
+        <input asp-for="GithubUrl" />
+        <span asp-validation-for="GithubUrl" class="text-danger"></span>
+    </label>
+
+    <label>
+        Demo URL
+        <input asp-for="DemoUrl" />
+        <span asp-validation-for="DemoUrl" class="text-danger"></span>
+    </label>
+
+    <label>
+        Video URL
+        <input asp-for="VideoUrl" />
+        <span asp-validation-for="VideoUrl" class="text-danger"></span>
+    </label>
+
+    <label>
+        Role
+        <input asp-for="Role" />
+        <span asp-validation-for="Role" class="text-danger"></span>
+    </label>
+
+    <label>
+        Status
+        <select asp-for="Status" asp-items="Html.GetEnumSelectList<ProjectStatus>()"></select>
+        <span asp-validation-for="Status" class="text-danger"></span>
+    </label>
+
+    <label>
+        Published At
+        <input asp-for="PublishedAt" placeholder="2026-07-06T14:30:00+07:00" />
+        <span asp-validation-for="PublishedAt" class="text-danger"></span>
+    </label>
+
+    <label class="admin-check span-2">
+        <input asp-for="Featured" />
+        <span>Feature this project on the public site</span>
+    </label>
+
+    <label class="span-2">
+        Challenges
+        <textarea asp-for="Challenges" rows="4"></textarea>
+        <span asp-validation-for="Challenges" class="text-danger"></span>
+    </label>
+
+    <label class="span-2">
+        Solutions
+        <textarea asp-for="Solutions" rows="4"></textarea>
+        <span asp-validation-for="Solutions" class="text-danger"></span>
+    </label>
+
+    <label class="span-2">
+        Results
+        <textarea asp-for="Results" rows="4"></textarea>
+        <span asp-validation-for="Results" class="text-danger"></span>
+    </label>
+
+    <label class="span-2">
+        Gallery image URLs
+        <textarea asp-for="GalleryImagesText" rows="5" placeholder="One image URL per line"></textarea>
+        <span asp-validation-for="GalleryImagesText" class="text-danger"></span>
+    </label>
+</div>

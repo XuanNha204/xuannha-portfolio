@@ -1,0 +1,27 @@
+@model XuanNha.Dev.Dtos.Taxonomy.CategoryDto
+
+@{
+    ViewData["Title"] = "Delete Category";
+}
+
+<section class="admin-page-heading">
+    <div>
+        <p class="section-kicker">Taxonomy</p>
+        <h1>Delete category</h1>
+    </div>
+    <a class="btn-ghost-neo" asp-area="Admin" asp-controller="Categories" asp-action="Index">Back to list</a>
+</section>
+
+<section class="admin-table-wrap">
+    <p>
+        Delete category <strong>@Model.Name</strong> (@Model.Slug)?
+        @if (Model.BlogPostCount > 0)
+        {
+            <span>This category is used by @Model.BlogPostCount post(s). Those posts will become uncategorized.</span>
+        }
+    </p>
+
+    <form asp-area="Admin" asp-controller="Categories" asp-action="Delete" asp-route-id="@Model.Id" method="post" class="admin-form">
+        <button type="submit" class="btn-primary-neo">Confirm Delete</button>
+    </form>
+</section>

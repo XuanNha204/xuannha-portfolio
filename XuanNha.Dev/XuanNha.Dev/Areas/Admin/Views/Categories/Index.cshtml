@@ -1,0 +1,59 @@
+@model IReadOnlyCollection<XuanNha.Dev.Dtos.Taxonomy.CategoryDto>
+
+@{
+    ViewData["Title"] = "Categories";
+}
+
+<section class="admin-page-heading">
+    <div>
+        <p class="section-kicker">Taxonomy</p>
+        <h1>Categories</h1>
+    </div>
+    <a class="btn-primary-neo" asp-area="Admin" asp-controller="Categories" asp-action="Create">New Category</a>
+</section>
+
+@if (TempData["AdminSuccess"] is string message)
+{
+    <div class="admin-alert">@message</div>
+}
+
+<section class="admin-table-wrap">
+    @if (!Model.Any())
+    {
+        <div class="admin-empty-state">
+            <p class="section-kicker">No categories yet</p>
+            <h1>Create the first blog category.</h1>
+            <a class="btn-primary-neo" asp-area="Admin" asp-controller="Categories" asp-action="Create">Create Category</a>
+        </div>
+    }
+    else
+    {
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Category</th>
+                    <th>Description</th>
+                    <th>Posts</th>
+                    <th class="admin-table-actions">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var category in Model)
+                {
+                    <tr>
+                        <td>
+                            <strong>@category.Name</strong>
+                            <span>@category.Slug</span>
+                        </td>
+                        <td>@(category.Description ?? "-")</td>
+                        <td>@category.BlogPostCount</td>
+                        <td class="admin-row-actions">
+                            <a asp-area="Admin" asp-controller="Categories" asp-action="Edit" asp-route-id="@category.Id">Edit</a>
+                            <a class="danger-link" asp-area="Admin" asp-controller="Categories" asp-action="Delete" asp-route-id="@category.Id">Delete</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</section>

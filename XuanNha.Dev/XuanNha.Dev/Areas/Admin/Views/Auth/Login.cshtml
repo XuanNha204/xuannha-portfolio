@@ -1,0 +1,46 @@
+@model LoginViewModel
+
+@{
+    ViewData["Title"] = "Sign In";
+    Layout = "_AdminLayout";
+}
+
+<section class="admin-auth-panel">
+    <div class="admin-auth-copy">
+        <p class="section-kicker">@L["Secure CMS Access"]</p>
+        <h1>@L["Manage portfolio content from one focused studio."]</h1>
+        <p>
+            @L["Sign in to maintain projects, blog posts, media, settings, and dashboard content backed by SQL Server."]
+        </p>
+    </div>
+
+    <form asp-area="Admin" asp-controller="Auth" asp-action="Login" method="post" class="admin-form">
+        @Html.AntiForgeryToken()
+        <input asp-for="ReturnUrl" type="hidden" />
+
+        <div asp-validation-summary="ModelOnly" class="text-danger admin-validation"></div>
+
+        <label asp-for="Email"></label>
+        <input asp-for="Email" autocomplete="username" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+
+        <label asp-for="Password"></label>
+        <input asp-for="Password" autocomplete="current-password" />
+        <span asp-validation-for="Password" class="text-danger"></span>
+
+        <label class="admin-check">
+            <input asp-for="RememberMe" />
+            <span>@L["Keep me signed in"]</span>
+        </label>
+
+        <button type="submit" class="btn-primary-neo">@L["Sign In"]</button>
+
+        <div class="admin-login-hint">
+            @L["Development admin"]: <strong>admin@xuannha.dev</strong>
+        </div>
+    </form>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

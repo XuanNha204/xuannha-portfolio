@@ -1,0 +1,18 @@
+@model ExperienceFormViewModel
+
+@{
+    ViewData["Title"] = "New Experience";
+}
+
+<section class="admin-page-heading">
+    <div>
+        <p class="section-kicker">About Page</p>
+        <h1>New experience</h1>
+    </div>
+    <a class="btn-ghost-neo" asp-area="Admin" asp-controller="Experiences" asp-action="Index">Back to list</a>
+</section>
+
+<form asp-area="Admin" asp-controller="Experiences" asp-action="Create" method="post" class="admin-form">
+    <partial name="_ExperienceForm" model="Model" />
+    <button type="submit" class="btn-primary-neo">Create Entry</button>
+</form>

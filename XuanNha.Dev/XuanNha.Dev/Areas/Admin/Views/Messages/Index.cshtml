@@ -1,0 +1,97 @@
+@model MessageIndexViewModel
+
+@{
+    ViewData["Title"] = "Messages";
+}
+
+<section class="admin-page-heading">
+    <div>
+        <p class="section-kicker">Inbox</p>
+        <h1>Contact messages</h1>
+    </div>
+</section>
+
+@if (TempData["AdminSuccess"] is string message)
+{
+    <div class="admin-alert">@message</div>
+}
+
+<form asp-area="Admin" asp-controller="Messages" asp-action="Index" method="get" class="admin-filter-bar">
+    <input asp-for="Query.Search" name="Search" placeholder="Search name, email, subject" />
+    <select asp-for="Query.IsRead" name="IsRead">
+        <option value="">All messages</option>
+        <option value="false">Unread</option>
+        <option value="true">Read</option>
+    </select>
+    <button type="submit" class="btn-ghost-neo">Filter</button>
+</form>
+
+<section class="admin-table-wrap">
+    @if (!Model.Messages.Items.Any())
+    {
+        <div class="admin-empty-state">
+            <p class="section-kicker">Inbox empty</p>
+            <h1>No contact messages yet.</h1>
+        </div>
+    }
+    else
+    {
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>From</th>
+                    <th>Subject</th>
+                    <th>Status</th>
+                    <th>Received</th>
+                    <th class="admin-table-actions">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Messages.Items)
+                {
+                    <tr>
+                        <td>
+                            <strong>@item.FullName</strong>
+                            <span>@item.Email</span>
+                        </td>
+                        <td>@item.Subject</td>
+                        <td><span class="admin-pill">@(item.IsRead ? "Read" : "Unread")</span></td>
+                        <td>@item.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                        <td class="admin-row-actions">
+                            <a asp-area="Admin" asp-controller="Messages" asp-action="Details" asp-route-id="@item.Id">View</a>
+                            <form asp-area="Admin" asp-controller="Messages" asp-action="SetRead" method="post">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@item.Id" />
+                                <input type="hidden" name="isRead" value="@((!item.IsRead).ToString().ToLowerInvariant())" />
+                                <button type="submit">@(item.IsRead ? "Mark Unread" : "Mark Read")</button>
+                            </form>
+                            <a class="danger-link" asp-area="Admin" asp-controller="Messages" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <div class="admin-pagination">
+            <span>Page @Model.Messages.PageNumber of @Model.Messages.TotalPages</span>
+            <div>
+                @if (Model.Messages.HasPreviousPage)
+                {
+                    <a asp-area="Admin" asp-controller="Messages" asp-action="Index"
+                       asp-route-Search="@Model.Query.Search"
+                       asp-route-IsRead="@Model.Query.IsRead"
+                       asp-route-PageNumber="@(Model.Messages.PageNumber - 1)"
+                       asp-route-PageSize="@Model.Messages.PageSize">Previous</a>
+                }
+                @if (Model.Messages.HasNextPage)
+                {
+                    <a asp-area="Admin" asp-controller="Messages" asp-action="Index"
+                       asp-route-Search="@Model.Query.Search"
+                       asp-route-IsRead="@Model.Query.IsRead"
+                       asp-route-PageNumber="@(Model.Messages.PageNumber + 1)"
+                       asp-route-PageSize="@Model.Messages.PageSize">Next</a>
+                }
+            </div>
+        </div>
+    }
+</section>

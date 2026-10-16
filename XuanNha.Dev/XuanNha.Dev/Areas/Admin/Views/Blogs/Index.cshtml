@@ -1,0 +1,111 @@
+@model BlogIndexViewModel
+
+@{
+    ViewData["Title"] = "Blog";
+}
+
+<section class="admin-page-heading">
+    <div>
+        <p class="section-kicker">Blog CMS</p>
+        <h1>Blog posts</h1>
+    </div>
+    <a class="btn-primary-neo" asp-area="Admin" asp-controller="Blogs" asp-action="Create">New Post</a>
+</section>
+
+@if (TempData["AdminSuccess"] is string message)
+{
+    <div class="admin-alert">@message</div>
+}
+
+<form asp-area="Admin" asp-controller="Blogs" asp-action="Index" method="get" class="admin-filter-bar blog-filter-bar">
+    <input asp-for="Query.Search" name="Search" placeholder="Search title, summary, markdown" />
+    <select asp-for="Query.Status" name="Status" asp-items="Html.GetEnumSelectList<BlogPostStatus>()">
+        <option value="">All statuses</option>
+    </select>
+    <select asp-for="Query.SortBy" name="SortBy">
+        <option value="">Created</option>
+        <option value="title">Title</option>
+        <option value="publishedat">Published date</option>
+        <option value="views">Views</option>
+    </select>
+    <input type="hidden" name="Descending" value="true" />
+    <button type="submit" class="btn-ghost-neo">Filter</button>
+</form>
+
+<section class="admin-table-wrap">
+    @if (!Model.BlogPosts.Items.Any())
+    {
+        <div class="admin-empty-state">
+            <p class="section-kicker">No posts yet</p>
+            <h1>Create the first technical article.</h1>
+            <a class="btn-primary-neo" asp-area="Admin" asp-controller="Blogs" asp-action="Create">Create Post</a>
+        </div>
+    }
+    else
+    {
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Post</th>
+                    <th>Status</th>
+                    <th>Read</th>
+                    <th>Views</th>
+                    <th>Published</th>
+                    <th class="admin-table-actions">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var post in Model.BlogPosts.Items)
+                {
+                    <tr>
+                        <td>
+                            <strong>@post.Title</strong>
+                            <span>@post.Slug</span>
+                        </td>
+                        <td><span class="admin-pill">@post.Status</span></td>
+                        <td>@post.ReadingTimeMinutes min</td>
+                        <td>@post.ViewCount</td>
+                        <td>@(post.PublishedAt?.ToString("yyyy-MM-dd") ?? "-")</td>
+                        <td class="admin-row-actions">
+                            <a asp-area="Admin" asp-controller="Blogs" asp-action="Details" asp-route-id="@post.Id">View</a>
+                            <a asp-area="Admin" asp-controller="Blogs" asp-action="Edit" asp-route-id="@post.Id">Edit</a>
+                            <form asp-area="Admin" asp-controller="Blogs" asp-action="SetStatus" method="post">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@post.Id" />
+                                <input type="hidden" name="status" value="@(post.Status == BlogPostStatus.Published ? BlogPostStatus.Draft : BlogPostStatus.Published)" />
+                                <button type="submit">@(post.Status == BlogPostStatus.Published ? "Draft" : "Publish")</button>
+                            </form>
+                            <a class="danger-link" asp-area="Admin" asp-controller="Blogs" asp-action="Delete" asp-route-id="@post.Id">Delete</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <div class="admin-pagination">
+            <span>Page @Model.BlogPosts.PageNumber of @Model.BlogPosts.TotalPages</span>
+            <div>
+                @if (Model.BlogPosts.HasPreviousPage)
+                {
+                    <a asp-area="Admin" asp-controller="Blogs" asp-action="Index"
+                       asp-route-Search="@Model.Query.Search"
+                       asp-route-Status="@Model.Query.Status"
+                       asp-route-SortBy="@Model.Query.SortBy"
+                       asp-route-Descending="@Model.Query.Descending"
+                       asp-route-PageNumber="@(Model.BlogPosts.PageNumber - 1)"
+                       asp-route-PageSize="@Model.BlogPosts.PageSize">Previous</a>
+                }
+                @if (Model.BlogPosts.HasNextPage)
+                {
+                    <a asp-area="Admin" asp-controller="Blogs" asp-action="Index"
+                       asp-route-Search="@Model.Query.Search"
+                       asp-route-Status="@Model.Query.Status"
+                       asp-route-SortBy="@Model.Query.SortBy"
+                       asp-route-Descending="@Model.Query.Descending"
+                       asp-route-PageNumber="@(Model.BlogPosts.PageNumber + 1)"
+                       asp-route-PageSize="@Model.BlogPosts.PageSize">Next</a>
+                }
+            </div>
+        </div>
+    }
+</section>

@@ -1,0 +1,27 @@
+@model XuanNha.Dev.Dtos.Taxonomy.TagDto
+
+@{
+    ViewData["Title"] = "Delete Tag";
+}
+
+<section class="admin-page-heading">
+    <div>
+        <p class="section-kicker">Taxonomy</p>
+        <h1>Delete tag</h1>
+    </div>
+    <a class="btn-ghost-neo" asp-area="Admin" asp-controller="Tags" asp-action="Index">Back to list</a>
+</section>
+
+<section class="admin-table-wrap">
+    <p>
+        Delete tag <strong>@Model.Name</strong> (@Model.Slug)?
+        @if (Model.BlogPostCount + Model.ProjectCount > 0)
+        {
+            <span>This tag is linked to @Model.BlogPostCount post(s) and @Model.ProjectCount project(s). Links will be removed.</span>
+        }
+    </p>
+
+    <form asp-area="Admin" asp-controller="Tags" asp-action="Delete" asp-route-id="@Model.Id" method="post" class="admin-form">
+        <button type="submit" class="btn-primary-neo">Confirm Delete</button>
+    </form>
+</section>

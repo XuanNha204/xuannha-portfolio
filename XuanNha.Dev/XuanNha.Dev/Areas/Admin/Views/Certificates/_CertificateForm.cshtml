@@ -1,0 +1,29 @@
+@model CertificateFormViewModel
+
+<div asp-validation-summary="ModelOnly" class="text-danger admin-validation"></div>
+
+<div class="admin-form-grid">
+    <label>
+        Name
+        <input asp-for="Name" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </label>
+
+    <label>
+        Issuer
+        <input asp-for="Issuer" />
+        <span asp-validation-for="Issuer" class="text-danger"></span>
+    </label>
+
+    <label>
+        Issued at
+        <input asp-for="IssuedAt" type="date" />
+        <span asp-validation-for="IssuedAt" class="text-danger"></span>
+    </label>
+
+    <label>
+        Credential URL
+        <input asp-for="CredentialUrl" />
+        <span asp-validation-for="CredentialUrl" class="text-danger"></span>
+    </label>
+</div>

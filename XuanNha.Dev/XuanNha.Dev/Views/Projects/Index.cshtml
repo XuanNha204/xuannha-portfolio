@@ -1,0 +1,65 @@
+@model ProjectListViewModel
+
+@{
+    ViewData["Title"] = L["Projects"].Value;
+    ViewData["Description"] = "Selected software projects by Huỳnh Xuân Nhã — web apps, APIs, and experiments.";
+}
+
+<section class="content-band project-band">
+    <div class="container-xl">
+        <div class="section-heading-row">
+            <div>
+                <p class="section-kicker">@L["Portfolio"]</p>
+                <h1>@L["Projects"]</h1>
+            </div>
+            <form asp-controller="Projects" asp-action="Index" method="get" class="d-flex gap-2">
+                <input class="form-control" type="search" name="search" value="@Model.Search" placeholder="@L["Search projects"].Value" />
+                <button type="submit" class="btn-ghost-neo">@L["Search"]</button>
+            </form>
+        </div>
+
+        @if (!Model.Projects.Items.Any())
+        {
+            <p>@L["No published projects yet. Check back soon."]</p>
+        }
+        else
+        {
+            <div class="work-grid work-grid-horizontal drag-scroll">
+                @foreach (var project in Model.Projects.Items)
+                {
+                    <article class="work-card">
+                        @if (!string.IsNullOrEmpty(project.ThumbnailUrl))
+                        {
+                            <img src="@project.ThumbnailUrl" alt="@project.Title" style="width:100%;border-radius:12px;aspect-ratio:16/9;object-fit:cover;" loading="lazy" />
+                        }
+                        <p class="section-kicker">@project.TechnologyStack</p>
+                        <h3>
+                            <a asp-controller="Projects" asp-action="Details" asp-route-slug="@project.Slug">@project.Title</a>
+                        </h3>
+                        <p>@project.Summary</p>
+                        <a class="btn-ghost-neo" asp-controller="Projects" asp-action="Details" asp-route-slug="@project.Slug">@L["View case study"]</a>
+                    </article>
+                }
+            </div>
+
+            @if (Model.Projects.TotalPages > 1)
+            {
+                <nav class="d-flex gap-3 mt-4" aria-label="Project pages">
+                    @if (Model.Projects.HasPreviousPage)
+                    {
+                        <a class="btn-ghost-neo" asp-controller="Projects" asp-action="Index"
+                           asp-route-search="@Model.Search"
+                           asp-route-pageNumber="@(Model.Projects.PageNumber - 1)">@L["Previous"]</a>
+                    }
+                    <span class="align-self-center">@L["Page {0} of {1}", Model.Projects.PageNumber, Model.Projects.TotalPages]</span>
+                    @if (Model.Projects.HasNextPage)
+                    {
+                        <a class="btn-ghost-neo" asp-controller="Projects" asp-action="Index"
+                           asp-route-search="@Model.Search"
+                           asp-route-pageNumber="@(Model.Projects.PageNumber + 1)">@L["Next"]</a>
+                    }
+                </nav>
+            }
+        }
+    </div>
+</section>

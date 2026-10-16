@@ -1,0 +1,59 @@
+@model IReadOnlyCollection<XuanNha.Dev.Dtos.Taxonomy.TagDto>
+
+@{
+    ViewData["Title"] = "Tags";
+}
+
+<section class="admin-page-heading">
+    <div>
+        <p class="section-kicker">Taxonomy</p>
+        <h1>Tags</h1>
+    </div>
+    <a class="btn-primary-neo" asp-area="Admin" asp-controller="Tags" asp-action="Create">New Tag</a>
+</section>
+
+@if (TempData["AdminSuccess"] is string message)
+{
+    <div class="admin-alert">@message</div>
+}
+
+<section class="admin-table-wrap">
+    @if (!Model.Any())
+    {
+        <div class="admin-empty-state">
+            <p class="section-kicker">No tags yet</p>
+            <h1>Create the first tag.</h1>
+            <a class="btn-primary-neo" asp-area="Admin" asp-controller="Tags" asp-action="Create">Create Tag</a>
+        </div>
+    }
+    else
+    {
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Tag</th>
+                    <th>Posts</th>
+                    <th>Projects</th>
+                    <th class="admin-table-actions">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var tag in Model)
+                {
+                    <tr>
+                        <td>
+                            <strong>@tag.Name</strong>
+                            <span>@tag.Slug</span>
+                        </td>
+                        <td>@tag.BlogPostCount</td>
+                        <td>@tag.ProjectCount</td>
+                        <td class="admin-row-actions">
+                            <a asp-area="Admin" asp-controller="Tags" asp-action="Edit" asp-route-id="@tag.Id">Edit</a>
+                            <a class="danger-link" asp-area="Admin" asp-controller="Tags" asp-action="Delete" asp-route-id="@tag.Id">Delete</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</section>

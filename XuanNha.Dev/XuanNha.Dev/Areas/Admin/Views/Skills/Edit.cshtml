@@ -1,0 +1,19 @@
+@model SkillFormViewModel
+
+@{
+    ViewData["Title"] = "Edit Skill";
+}
+
+<section class="admin-page-heading">
+    <div>
+        <p class="section-kicker">About Page</p>
+        <h1>Edit skill</h1>
+    </div>
+    <a class="btn-ghost-neo" asp-area="Admin" asp-controller="Skills" asp-action="Index">Back to list</a>
+</section>
+
+<form asp-area="Admin" asp-controller="Skills" asp-action="Edit" asp-route-id="@Model.Id" method="post" class="admin-form">
+    <input type="hidden" asp-for="Id" />
+    <partial name="_SkillForm" model="Model" />
+    <button type="submit" class="btn-primary-neo">Save Changes</button>
+</form>

@@ -1,0 +1,60 @@
+@model List<XuanNha.Dev.Entities.Profile.SocialLink>
+
+@{
+    ViewData["Title"] = "Social Links";
+}
+
+<section class="admin-page-heading">
+    <div>
+        <p class="section-kicker">About Page</p>
+        <h1>Social links</h1>
+    </div>
+    <a class="btn-primary-neo" asp-area="Admin" asp-controller="SocialLinks" asp-action="Create">New Link</a>
+</section>
+
+@if (TempData["AdminSuccess"] is string message)
+{
+    <div class="admin-alert">@message</div>
+}
+
+<section class="admin-table-wrap">
+    @if (!Model.Any())
+    {
+        <div class="admin-empty-state">
+            <p class="section-kicker">No links yet</p>
+            <h1>Add the first social link.</h1>
+            <a class="btn-primary-neo" asp-area="Admin" asp-controller="SocialLinks" asp-action="Create">Create Link</a>
+        </div>
+    }
+    else
+    {
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Platform</th>
+                    <th>URL</th>
+                    <th>Order</th>
+                    <th class="admin-table-actions">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var link in Model)
+                {
+                    <tr>
+                        <td><strong>@link.Platform</strong></td>
+                        <td><a href="@link.Url" target="_blank" rel="noreferrer">@link.Url</a></td>
+                        <td>@link.DisplayOrder</td>
+                        <td class="admin-row-actions">
+                            <a asp-area="Admin" asp-controller="SocialLinks" asp-action="Edit" asp-route-id="@link.Id">Edit</a>
+                            <form asp-area="Admin" asp-controller="SocialLinks" asp-action="Delete" method="post">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@link.Id" />
+                                <button type="submit" class="danger-link">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</section>

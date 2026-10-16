@@ -1,0 +1,56 @@
+@model ProfileFormViewModel
+
+@{
+    ViewData["Title"] = "Profile";
+}
+
+<section class="admin-page-heading">
+    <div>
+        <p class="section-kicker">About Page</p>
+        <h1>Profile</h1>
+    </div>
+    <a class="btn-ghost-neo" href="/about" target="_blank" rel="noreferrer">View About page</a>
+</section>
+
+@if (TempData["AdminSuccess"] is string message)
+{
+    <div class="admin-alert">@message</div>
+}
+
+<form asp-area="Admin" asp-controller="Profile" asp-action="Edit" method="post" class="admin-form">
+    <div asp-validation-summary="ModelOnly" class="text-danger admin-validation"></div>
+
+    <div class="admin-form-grid">
+        <label class="span-2">
+            Headline
+            <input asp-for="Headline" placeholder="e.g. Fullstack .NET Developer — Vibe Coding Studio" />
+            <span asp-validation-for="Headline" class="text-danger"></span>
+        </label>
+
+        <label class="span-2">
+            About me
+            <textarea asp-for="AboutMe" rows="8" placeholder="Introduce yourself. This appears on the About page."></textarea>
+            <span asp-validation-for="AboutMe" class="text-danger"></span>
+        </label>
+
+        <label>
+            Avatar URL
+            <input asp-for="AvatarUrl" placeholder="/uploads/2026-07/avatar.png" />
+            <span asp-validation-for="AvatarUrl" class="text-danger"></span>
+        </label>
+
+        <label>
+            Resume/CV URL
+            <input asp-for="ResumeUrl" placeholder="/uploads/2026-07/cv.pdf" />
+            <span asp-validation-for="ResumeUrl" class="text-danger"></span>
+        </label>
+
+        <label>
+            Location
+            <input asp-for="Location" placeholder="e.g. Ho Chi Minh City, Vietnam" />
+            <span asp-validation-for="Location" class="text-danger"></span>
+        </label>
+    </div>
+
+    <button type="submit" class="btn-primary-neo">Save Profile</button>
+</form>

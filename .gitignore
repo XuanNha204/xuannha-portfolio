@@ -1,3 +1,20 @@
+# Build output
+bin/
+obj/
+*.user
+
+# Visual Studio / Rider / VS Code
+.vs/
+.idea/
+*.suo
+
+# User uploads (managed by the Media Manager, not source control)
+XuanNha.Dev/XuanNha.Dev/wwwroot/uploads/
+
+# Local secrets
+appsettings.*.local.json
+
+# Next.js and local environment
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
@@ -42,3 +59,11 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Local verification output and duplicate ignore backup
+/verify-build/
+**/test-results/
+/ (2).gitignore
+# Local ASP.NET development credentials
+/XuanNha.Dev/XuanNha.Dev/appsettings.Development.json
+
